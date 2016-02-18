@@ -1,0 +1,51 @@
+﻿  StdAfxRegArchLib.cpp
+c:\users\ollivier\documents\visual studio 2015\git repo\gitdepot1.git\regarch15 - excel 2013\regarchlib\cFigarch.h(31): warning C4251: 'RegArchLib::cFigarch::mvPhi' : class 'RegArchLib::cPolynome' nécessite une interface DLL pour être utilisé(e) par les clients de class 'RegArchLib::cFigarch'
+  c:\users\ollivier\documents\visual studio 2015\git repo\gitdepot1.git\regarch15 - excel 2013\regarchlib\cPolynome.h(10): note: voir la déclaration de 'RegArchLib::cPolynome'
+c:\users\ollivier\documents\visual studio 2015\git repo\gitdepot1.git\regarch15 - excel 2013\regarchlib\cFigarch.h(32): warning C4251: 'RegArchLib::cFigarch::mvTeta' : class 'RegArchLib::cPolynome' nécessite une interface DLL pour être utilisé(e) par les clients de class 'RegArchLib::cFigarch'
+  c:\users\ollivier\documents\visual studio 2015\git repo\gitdepot1.git\regarch15 - excel 2013\regarchlib\cPolynome.h(10): note: voir la déclaration de 'RegArchLib::cPolynome'
+c:\users\ollivier\documents\visual studio 2015\git repo\gitdepot1.git\regarch15 - excel 2013\regarchlib\cFigarch.h(33): warning C4251: 'RegArchLib::cFigarch::mvARMAPol' : class 'RegArchLib::cPolynome' nécessite une interface DLL pour être utilisé(e) par les clients de class 'RegArchLib::cFigarch'
+  c:\users\ollivier\documents\visual studio 2015\git repo\gitdepot1.git\regarch15 - excel 2013\regarchlib\cPolynome.h(10): note: voir la déclaration de 'RegArchLib::cPolynome'
+c:\users\ollivier\documents\visual studio 2015\git repo\gitdepot1.git\regarch15 - excel 2013\regarchlib\cFigarch.h(34): warning C4251: 'RegArchLib::cFigarch::mvGradAlpha' : class 'RegArchLib::cPolynome' nécessite une interface DLL pour être utilisé(e) par les clients de class 'RegArchLib::cFigarch'
+  c:\users\ollivier\documents\visual studio 2015\git repo\gitdepot1.git\regarch15 - excel 2013\regarchlib\cPolynome.h(10): note: voir la déclaration de 'RegArchLib::cPolynome'
+c:\users\ollivier\documents\visual studio 2015\git repo\gitdepot1.git\regarch15 - excel 2013\regarchlib\cFigarch.h(35): warning C4251: 'RegArchLib::cFigarch::mvGradBeta' : class 'RegArchLib::cPolynome' nécessite une interface DLL pour être utilisé(e) par les clients de class 'RegArchLib::cFigarch'
+  c:\users\ollivier\documents\visual studio 2015\git repo\gitdepot1.git\regarch15 - excel 2013\regarchlib\cPolynome.h(10): note: voir la déclaration de 'RegArchLib::cPolynome'
+c:\users\ollivier\documents\visual studio 2015\git repo\gitdepot1.git\regarch15 - excel 2013\regarchlib\cFigarch.h(36): warning C4251: 'RegArchLib::cFigarch::mvGradD' : class 'RegArchLib::cPolynome' nécessite une interface DLL pour être utilisé(e) par les clients de class 'RegArchLib::cFigarch'
+  c:\users\ollivier\documents\visual studio 2015\git repo\gitdepot1.git\regarch15 - excel 2013\regarchlib\cPolynome.h(10): note: voir la déclaration de 'RegArchLib::cPolynome'
+c:\users\ollivier\documents\visual studio 2015\git repo\gitdepot1.git\regarch15 - excel 2013\regarchlib\cCondMean.h(30): warning C4251: 'RegArchLib::cCondMean::mvCondMean' : class 'std::vector<RegArchLib::cAbstCondMean *,std::allocator<_Ty>>' nécessite une interface DLL pour être utilisé(e) par les clients de class 'RegArchLib::cCondMean'
+          with
+          [
+              _Ty=RegArchLib::cAbstCondMean *
+          ]
+  cAbstCondMean.cpp
+  cAbstCondVar.cpp
+  cAbstResiduals.cpp
+  cAparch.cpp
+  cAr.cpp
+  cArch.cpp
+  cCondMean.cpp
+  cConst.cpp
+  cConstCondVar.cpp
+  cEgarch.cpp
+  cFigarch.cpp
+  cGarch.cpp
+  cLinReg.cpp
+  cMa.cpp
+  cNormResiduals.cpp
+  cRegArchGradient.cpp
+  cRegArchHessien.cpp
+  cRegArchModel.cpp
+  cRegArchValue.cpp
+  cStdDevInMean.cpp
+  Analyse du code en cours pour C/C++...
+  Compilation en cours...
+  cStudentResiduals.cpp
+  cTarch.cpp
+  cVarInMean.cpp
+  GslAndNloptOptim.cpp
+  cPolynome.cpp
+  RegArchCompute.cpp
+  Analyse du code en cours pour C/C++...
+  RegArchLib.vcxproj -> C:\Users\Ollivier\Documents\Visual Studio 2015\Git Repo\GitDepot1.git\RegArch15 - Excel 2013\Lib\Release CLI\Win32\RegArchLib.lib
+c:\users\ollivier\documents\visual studio 2015\git repo\gitdepot1.git\regarch15 - excel 2013\regarchlib\gslandnloptoptim.cpp(96): warning C6011: Suppression de la référence du pointeur NULL 'theGrad'. 
+c:\users\ollivier\documents\visual studio 2015\git repo\gitdepot1.git\regarch15 - excel 2013\regarchlib\regarchcompute.cpp(593): warning C6011: Suppression de la référence du pointeur NULL 'myAlgoParam'. 
+c:\users\ollivier\documents\visual studio 2015\git repo\gitdepot1.git\regarch15 - excel 2013\regarchlib\regarchcompute.cpp(689): warning C6280: 'myAlgoParam' est alloué avec 'new', mais supprimé avec 'free'.

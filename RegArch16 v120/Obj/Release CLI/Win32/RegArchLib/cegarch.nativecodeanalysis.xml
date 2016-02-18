@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DEFECTS>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>c:\users\ollivier\documents\visual studio 2015\git repo\gitdepot1.git\regarch15 - excel 2013\regarchlib\</FILEPATH>
+      <FILENAME>cegarch.cpp</FILENAME>
+      <LINE>295</LINE>
+      <COLUMN>12</COLUMN>
+    </SFA>
+    <DEFECTCODE>6246</DEFECTCODE>
+    <DESCRIPTION>La déclaration locale de 'i' masque la déclaration du même nom dans la portée externe. Pour des informations supplémentaires, reportez-vous à la déclaration précédente à la ligne '258' de 'c:\users\ollivier\documents\visual studio 2015\git repo\gitdepot1.git\regarch15 - excel 2013\regarchlib\cegarch.cpp'.</DESCRIPTION>
+    <FUNCTION>RegArchLib::cEgarch::ComputeGrad</FUNCTION>
+    <DECORATED>?ComputeGrad@cEgarch@RegArchLib@@UAEXIABVcRegArchValue@2@AAVcRegArchGradient@2@PAVcAbstResiduals@2@@Z</DECORATED>
+    <FUNCLINE>253</FUNCLINE>
+    <PATH>
+      <SFA>
+        <FILEPATH>c:\users\ollivier\documents\visual studio 2015\git repo\gitdepot1.git\regarch15 - excel 2013\regarchlib\</FILEPATH>
+        <FILENAME>cegarch.cpp</FILENAME>
+        <LINE>258</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+    </PATH>
+  </DEFECT>
+</DEFECTS>

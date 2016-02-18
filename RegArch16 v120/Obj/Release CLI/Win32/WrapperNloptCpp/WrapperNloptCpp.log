@@ -1,0 +1,37 @@
+﻿C:\Program Files (x86)\MSBuild\14.0\bin\Microsoft.Common.CurrentVersion.targets(1610,5): warning : The referenced project '..\nlopt-2.4.2\nlopt-2.4.2.vcxproj' does not exist.
+  StdAfxWrapperNloptCpp.cpp
+  WrapperNloptCpp.cpp
+WrapperNloptCpp.cpp(38): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1769): note: voir la déclaration de 'sprintf'
+WrapperNloptCpp.cpp(49): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1769): note: voir la déclaration de 'sprintf'
+WrapperNloptCpp.cpp(182): warning C4244: 'argument' : conversion de 'double' en 'int', perte possible de données
+WrapperNloptCpp.cpp(187): warning C4804: '<' : utilisation risquée du type 'bool' dans l'opération
+WrapperNloptCpp.cpp(194): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1769): note: voir la déclaration de 'sprintf'
+WrapperNloptCpp.cpp(197): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1769): note: voir la déclaration de 'sprintf'
+WrapperNloptCpp.cpp(200): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1769): note: voir la déclaration de 'sprintf'
+WrapperNloptCpp.cpp(203): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1769): note: voir la déclaration de 'sprintf'
+WrapperNloptCpp.cpp(206): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1769): note: voir la déclaration de 'sprintf'
+WrapperNloptCpp.cpp(209): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1769): note: voir la déclaration de 'sprintf'
+WrapperNloptCpp.cpp(212): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1769): note: voir la déclaration de 'sprintf'
+WrapperNloptCpp.cpp(215): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1769): note: voir la déclaration de 'sprintf'
+WrapperNloptCpp.cpp(218): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1769): note: voir la déclaration de 'sprintf'
+WrapperNloptCpp.cpp(221): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1769): note: voir la déclaration de 'sprintf'
+WrapperNloptCpp.cpp(224): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1769): note: voir la déclaration de 'sprintf'
+  WrapperNloptCpp.vcxproj -> C:\Users\Ollivier\Documents\Visual Studio 2015\Git Repo\GitDepot1.git\RegArch15 - Excel 2013\Lib\Release CLI\Win32\WrapperNloptCpp.lib
+c:\users\ollivier\documents\visual studio 2015\git repo\gitdepot1.git\regarch15 - excel 2013\wrappernloptcpp\wrappernloptcpp.cpp(77): warning C6011: Suppression de la référence du pointeur NULL 'mylb'. 
+c:\users\ollivier\documents\visual studio 2015\git repo\gitdepot1.git\regarch15 - excel 2013\wrappernloptcpp\wrappernloptcpp.cpp(78): warning C6011: Suppression de la référence du pointeur NULL 'myub'. 
+c:\users\ollivier\documents\visual studio 2015\git repo\gitdepot1.git\regarch15 - excel 2013\wrappernloptcpp\wrappernloptcpp.cpp(115): warning C6011: Suppression de la référence du pointeur NULL 'myub'. 
+c:\users\ollivier\documents\visual studio 2015\git repo\gitdepot1.git\regarch15 - excel 2013\wrappernloptcpp\wrappernloptcpp.cpp(114): warning C6011: Suppression de la référence du pointeur NULL 'mylb'. 
+c:\users\ollivier\documents\visual studio 2015\git repo\gitdepot1.git\regarch15 - excel 2013\wrappernloptcpp\wrappernloptcpp.cpp(175): warning C6386: Dépassement de mémoire tampon lors de l'écriture sur 'theResult.mXOptim' : la taille accessible en écriture est 'theDimension*sizeof(double)' octets, mais '16' octets sont peut-être écrits.
