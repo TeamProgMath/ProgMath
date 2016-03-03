@@ -164,7 +164,7 @@ namespace RegArchLib {
 	void cAr::ComputeHess(uint theDate, const cRegArchValue & theData, cRegArchGradient & theGradData, cRegArchHessien & theHessData, uint theBegIndex, cAbstResiduals * theResiduals)
 	{
 		
-
+		
 	}
 
 
