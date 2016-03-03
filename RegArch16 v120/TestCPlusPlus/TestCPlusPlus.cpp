@@ -14,11 +14,11 @@ using namespace RegArchLib ;
 int _tmain(int argc, _TCHAR* argv[])
 {
 	cout.precision(12) ; 
-
+	/*
 cFigarch myFigarch(1, 1, 0.5, 100);
 	myFigarch.Set(.1, 0, 0);
 	myFigarch.Set(.1, 0, 1);
-	myFigarch.Set(.8, 0, 2);
+	myFigarch.Set(.8, 0, 2);*/
 
 cAr	myAr(2) ;
 
@@ -45,10 +45,11 @@ cCondMean myCondMean ;
 	myCondMean1 = myCondMean ;
 //	cout << "CondMean1 : " <<  myCondMean1 << endl ;
 */
-cGarch myGarch(1,1) ;
+
+/*cGarch myGarch(1,1) ;
 	myGarch.Set(0.1, 0, 0) ;
 	myGarch.Set(0.1, 0, 1) ;
-	myGarch.Set(0.8, 0, 2) ;
+	myGarch.Set(0.8, 0, 2) ¨;*/
 
 
 //cConstCondVar myConstVar(1.0) ;
@@ -79,9 +80,10 @@ cRegArchModel myModel ;
 //	myModel.SetVar(myGarch);
 //	myModel.SetVar(myConstVar);	
 	
-	myModel.SetVar(myFigarch) ;
+	/*myModel.SetVar(myFigarch) ;
 	cout << "Modele : " ;
-	myModel.Print() ;
+	myModel.Print() ;*/
+
 //	return 0 ;
 	
 /*
@@ -157,7 +159,7 @@ cNLOPTAlgoParam* myAlgoParam = new cNLOPTAlgoParam();
 	
 cDVector myInitPoint = cDVector(myNParam, 0.0) ;
 // Ox Garch init value
-/*
+/*)
 
 Parameter      Starting Value
 Cst(M)               0.010000
