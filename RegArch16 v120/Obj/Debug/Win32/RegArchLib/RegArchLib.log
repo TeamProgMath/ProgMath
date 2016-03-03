@@ -1,1 +1,11 @@
-﻿
+﻿La génération a démarré 03/03/2016 10:14:53.
+     1>Projet "C:\Users\ensimag\Documents\ProgMath\RegArch16 v120\RegArchLib\RegArchLib.vcxproj" sur le nœud 2 (Build cible(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Users\ensimag\Documents\ProgMath\gsl-dir\gsl-include" /I"C:\Users\ensimag\Documents\ProgMath\nlopt-dir\nlopt-include" /I"C:\Users\ensimag\Documents\ProgMath\RegArch16 v120\Error" /I"C:\Users\ensimag\Documents\ProgMath\RegArch16 v120\VectorAndMatrix" /I"C:\Users\ensimag\Documents\ProgMath\RegArch16 v120\WrapperGSLCpp" /I"C:\Users\ensimag\Documents\ProgMath\RegArch16 v120\WrapperNloptCpp" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"StdAfxRegArchLib.h" /Fp"C:\Users\ensimag\Documents\ProgMath\RegArch16 v120\Obj\Debug\Win32\RegArchLib\RegArchLib.pch" /Fo"C:\Users\ensimag\Documents\ProgMath\RegArch16 v120\Obj\Debug\Win32\RegArchLib\\" /Fd"C:\Users\ensimag\Documents\ProgMath\RegArch16 v120\Obj\Debug\Win32\RegArchLib\vc120.pdb" /Gd /TP /wd4715 /analyze- /errorReport:prompt StdAfxRegArchLib.cpp
+         StdAfxRegArchLib.cpp
+     1>c:\users\ensimag\documents\progmath\regarch16 v120\regarchlib\cregarchmodel.h(6): fatal error C1083: Impossible d'ouvrir le fichier include : 'cCondVar.h' : No such file or directory
+     1>Génération du projet "C:\Users\ensimag\Documents\ProgMath\RegArch16 v120\RegArchLib\RegArchLib.vcxproj" terminée (Build cible(s)) -- ÉCHEC.
+
+ÉCHEC de la build.
+
+Temps écoulé 00:00:00.57
