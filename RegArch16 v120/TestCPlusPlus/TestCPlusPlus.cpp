@@ -78,6 +78,7 @@ cRegArchModel myModel ;
 	myModel.SetResid(myNormResid);
 //	myModel.SetVar(myGarch);
 //	myModel.SetVar(myConstVar);	
+	
 	myModel.SetVar(myFigarch) ;
 	cout << "Modele : " ;
 	myModel.Print() ;
