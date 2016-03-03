@@ -9,16 +9,15 @@ namespace RegArchLib {
 	class cPolynome
 	{
 	public:
-		cDVector* mCoeff;
+		cDVector mCoeff;
 	public:
-		cPolynome();
-		cPolynome(uint theDegree);
+		cPolynome(uint theDegree=0);
 		cPolynome(uint theDegree, double* theCoeff);
 		cPolynome(cDVector& theCoeff);
-		cPolynome(const cPolynome& theSrc);
+		cPolynome(cPolynome& theSrc);
 		~cPolynome();
 		void Delete();
-		int GetNDegree(void);
+		uint GetNDegree(void);
 		void Resize(uint theDegree);
 		void Print(void);
 		double& operator[](uint theUndex);
@@ -28,7 +27,7 @@ namespace RegArchLib {
 		cPolynome& operator*(cPolynome& theP);
 		friend cPolynome& operator*(double theVal, cPolynome& theP);
 		friend cPolynome& operator*(cPolynome& theP, double theVal);
-		friend double BackwardPolOp(cPolynome& theP, cDVector& theYt, uint theIndex0 = 0, double thePow = 1.0);
+		friend double BackwardPolOp(cPolynome& theP, cDVector& theYt, uint theIndex0 = 0);
 	};
 
 	extern cPolynome ourPolynom;

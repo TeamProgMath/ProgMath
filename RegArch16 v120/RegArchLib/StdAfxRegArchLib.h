@@ -35,7 +35,6 @@
 #include "cStdDevInMean.h"
 #include "cVarInMean.h"
 #include "cLinReg.h"
-#include "cArfima.h"
 
 #include "cConstCondVar.h"
 #include "cArch.h"

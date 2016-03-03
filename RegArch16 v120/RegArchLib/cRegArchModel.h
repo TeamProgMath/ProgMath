@@ -3,6 +3,7 @@
 #define _CREGARCHMODEL_
 
 #include "cCondMean.h"
+#include "cCondVar.h"
 #include "cAbstCondVar.h"
 #include "cAbstResiduals.h"
 
@@ -22,11 +23,12 @@ namespace RegArchLib {
 	{
 	public :
 		cCondMean*		mMean	; ///< conditional mean model
-		cAbstCondVar*	mVar	; ///< conditional variance model
+		cCondVar*	mVar	; ///< conditional variance model
 		cAbstResiduals*	mResids	; ///< conditional residuals distribution model
 	public :
 		cRegArchModel();
-		cRegArchModel(cCondMean& theMean, cAbstCondVar& theVar, cAbstResiduals& theResiduals) ; ///< A simple constructor
+		int GetNVar(void);
+		cRegArchModel(cCondMean& theMean, cCondVar& theVar, cAbstResiduals& theResiduals) ; ///< A simple constructor
 		cRegArchModel(cRegArchModel& theModel) ; ///< Recopy constructor
 		virtual ~cRegArchModel() ; ///< Destructor
 		cRegArchModel& operator=(cRegArchModel& theRegArchModel) ; ///< = operator for cRegArchModel Class
@@ -36,15 +38,15 @@ namespace RegArchLib {
 		void AddOneMean(cAbstCondMean& theOneMean) ; ///< Add one component for conditional mean
 		cAbstCondMean*  GetOneMean(int theNumMean) ;
 		bool IsGoodMeanType(eCondMeanEnum theMeanEnum, int theIndex) ;
-		void SetVar(cAbstCondVar& theCondVar) ; ///< Add (unique) component for conditional mean
-		cAbstCondVar* GetVar(void) ;
+		void SetVar(cCondVar& theCondVar) ; ///< Add (unique) component for conditional mean
+		cCondVar* GetVar(void) ;
 		void SetResid(cAbstResiduals& theCondResids) ; ///< Add (unique) distribution for the distribution of residuals
 		cAbstResiduals* GetResid(void) ; ///< Add (unique) distribution for the distribution of residuals
 		void PrintMean(ostream& theOut=cout) const; ///< Print conditional mean model
 		void PrintVar(ostream& theOut=cout) const;  ///< Print conditional var model
 		void PrintResiduals(ostream& theOut=cout) const; ///< Print conditional residuals distribution model
 		void Print(ostream& theOut=cout) const; ///< Print the whole model
-		void SetDefaultInitPoint(cRegArchValue& theValue) ;
+		//void SetDefaultInitPoint(cRegArchValue& theValue) ;
 		uint GetNParam(void) const ; ///< Return the total number of model parameters
 		uint GetNLags(void) const ; ///< Number of past gradients required to compute gradient at current time t.
 		void ComputeGrad(uint theDate, const cRegArchValue& theData, cRegArchGradient& theGradData) ;
