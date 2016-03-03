@@ -25,15 +25,11 @@ namespace RegArchLib {
 		cDVector mvGarch ;
 	public :
 		cAparch(int theNArch=0, int theNGarch=0) ; ///< a simple constructor
-		cAparch(const cAparch& theAparch);
+		cAparch(cAbstCondVar& theAparch);
 		virtual ~cAparch(); ///< a simple destructor
 		virtual cAbstCondVar* PtrCopy() const ; /// < Return a copy of *this				
 		void Delete(void) ; ///< delete
-	#ifndef _RDLL_
 		void Print(ostream& theOut=cout) const ; ///< print the parameters
-	#else
-		void Print(void);
-	#endif //_RDLL_
 		/** Change model parameters.
 		 * Vector of parameters is resized to size theParam[0] */
 		void ReAlloc(const uint theSize, const uint theNumParam=0) ; ///< Allocation of the model parameters
@@ -44,7 +40,7 @@ namespace RegArchLib {
 		void Set(const double theValue, const uint theIndex=0, const uint theNumParam=0) ; ///< Set model parameters.
 		void Set(const cDVector& theVectParam, const uint theNumParam=0) ; ///< Set model parameters.
 		double Get(const uint theIndex=0, const uint theNumParam=0) ;
-		cAparch& operator=(const cAparch& theSrc) ;
+		cAbstCondVar& operator=(cAbstCondVar& theSrc) ;
 		void UpdateProxyVarParameters(void) {};
 		/** Return conditional variance.
 		 * \param theDate Date for conditional variance computation

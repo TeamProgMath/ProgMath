@@ -25,23 +25,19 @@ namespace RegArchLib {
 	public :
 		cMa(uint theNMa = 0) ; ///< A simple constructor
 		cMa(const cDVector& theMa) ; ///< Another constructor
-		cMa(const cMa& theMa) ; /// Recopy constructor
+	//	cMa(cAbstCondMean& theAbstCondMean) ; /// Recopy constructor
 		virtual ~cMa() ;  ///< A simple destructor
 		cAbstCondMean* PtrCopy(void) const ; /// < Return a copy of *this
 		void Delete(void) ; ///< Free memory
-	#ifndef _RDLL_
-		void Print(ostream& theOut = cout) const; ///< print the parameters
-	#else
-		void Print(void);
-	#endif //_RDLL_
+		void Print(ostream& theOut) const ; ///< Print the parameters
+		void Print(void) const ; ///< print the parameters
 		void SetDefaultInitPoint(double theMean, double theVar) ;
 		void ReAlloc(const uint theSize, const uint theNumParam=0) ; ///< Allocation of the model parameters
 		void ReAlloc(const cDVector& theVectParam, const uint theNumParam=0) ; ///< Allocation of the model parameters
 		void Set(const double theValue, const uint theIndex=0, const uint theNumParam=0) ; ///< Set model parameters.
 		void Set(const cDVector& theVectParam, const uint theNumParam=0) ; ///< Set model parameters.
 		double Get(const uint theIndex=0, const uint theNumParam=0) ;
-		cMa& operator=(const cMa& theSrc) ; ///< Standard affectation
-		void UpdateProxyMeanParameters(void) {};
+		cAbstCondMean& operator=(cAbstCondMean& theSrc) ; ///< Standard affectation
 		double ComputeMean(uint theDate, const cRegArchValue& theData) const ; /// Compute the conditional mean value
 		uint GetNParam(void) const ;
 		uint GetNLags(void) const ;
@@ -49,6 +45,7 @@ namespace RegArchLib {
 		void ComputeHess(uint theDate, const cRegArchValue& theData, cRegArchGradient& theGradData,cRegArchHessien& theHessData, uint theBegIndex, cAbstResiduals* theResiduals) ;
 		void RegArchParamToVector(cDVector& theDestVect, uint theIndex) ;
 		void VectorToRegArchParam(const cDVector& theSrcVect, uint theIndex = 0) ;
+		void copy(const cMa & theMa);
 	} ;
 
 }

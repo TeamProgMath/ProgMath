@@ -32,11 +32,7 @@ namespace RegArchLib {
 		virtual cAbstCondVar* PtrCopy() const = 0 ; /// < Return a copy of *this		
 		eCondVarEnum GetCondVarType(void) const ; ///< Return the variance type code
 		virtual void Delete(void) = 0 ; ///< delete
-	#ifndef _RDLL_
-		virtual void Print(ostream& theOut = cout) const = 0; ///< print the parameters
-	#else
-		virtual void Print(void) = 0;
-	#endif //_RDLL_
+		virtual void Print(ostream& theOut=cout) const = 0 ;  ///< Print the parameters
 		friend ostream& operator <<(ostream& theOut, const cAbstCondVar& theAbstCondVar) ; ///< Print the parameters
 		virtual void Set(const double theValue, const uint theIndex=0, const uint theNumParam=0) = 0 ; ///< Set model parameters.
 		virtual void Set(const cDVector& theVectParam, const uint theNumParam=0) = 0 ; ///< Set model parameters.
@@ -48,14 +44,14 @@ namespace RegArchLib {
 		/** Return the number of parameters in CondVar */
 		virtual uint GetNParam(void) const = 0 ;
 		virtual uint GetNLags(void) const = 0 ; ///< Number of past gradients required to compute gradient at current time t.
-		virtual void ComputeGrad(uint theDate, const cRegArchValue& theData, cRegArchGradient& theGradData, cAbstResiduals* theResiduals) = 0 ;
-		virtual void NumericComputeGrad(uint theDate, const cRegArchValue& theData, cRegArchGradient& theGradData, cAbstResiduals* theResiduals, double theh = 1e-3);
+		virtual void ComputeGrad(uint theDate, const cRegArchValue& theData, cRegArchGradient& theGradData, uint theBegIndex, cAbstResiduals* theResiduals) = 0 ;
+		//virtual void NumericComputeGrad(uint theDate, const cRegArchValue& theData, cRegArchGradient& theGradData, cAbstResiduals* theResiduals, double theh = 1e-3);
 		virtual void RegArchParamToVector(cDVector& theDestVect, uint theIndex = 0)  = 0 ;
 		virtual void VectorToRegArchParam(const cDVector& theSrcVect, uint theIndex = 0) = 0 ;
-		virtual void SetDefaultInitPoint(double theMean, double theVar)=0;
+		//virtual void SetDefaultInitPoint(double theMean, double theVar)=0;
 		virtual void ComputeHess(uint theDate, const cRegArchValue& theData, cRegArchGradient& theGradData, cRegArchHessien& theHessData, cAbstResiduals* theResiduals) = 0;
 	};
-	cAbstCondVar* CreateRealCondVar(eCondVarEnum theType);
-	cAbstCondVar* CreateRealCondVar(cAbstCondVar& theAbstCondVar);
+//	cAbstCondVar* CreateRealCondVar(eCondVarEnum theType);
+//	cAbstCondVar* CreateRealCondVar(cAbstCondVar& theAbstCondVar);
 }
 #endif // _CABSTCONDVAR_H_
