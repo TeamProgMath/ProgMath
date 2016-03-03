@@ -6,6 +6,8 @@
 #include <cstring>
 #include <cmath>
 #include <ctime>
+#include <limits.h>
+
 
 #ifdef _MESS_CREAT
 	#ifdef _DEBUG
