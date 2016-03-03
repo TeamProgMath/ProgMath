@@ -1,1 +1,16 @@
-﻿
+﻿La génération a démarré 03/03/2016 09:40:45.
+     1>Projet "C:\Users\ensimag\Documents\ProgMath\RegArch16 v120\Error\Error.vcxproj" sur le nœud 2 (Build cible(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"StdAfxError.h" /Fp"C:\Users\ensimag\Documents\ProgMath\RegArch16 v120\Obj\Debug\Win32\Error\Error.pch" /Fo"C:\Users\ensimag\Documents\ProgMath\RegArch16 v120\Obj\Debug\Win32\Error\\" /Fd"C:\Users\ensimag\Documents\ProgMath\RegArch16 v120\Obj\Debug\Win32\Error\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt StdAfxError.cpp
+         StdAfxError.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"StdAfxError.h" /Fp"C:\Users\ensimag\Documents\ProgMath\RegArch16 v120\Obj\Debug\Win32\Error\Error.pch" /Fo"C:\Users\ensimag\Documents\ProgMath\RegArch16 v120\Obj\Debug\Win32\Error\\" /Fd"C:\Users\ensimag\Documents\ProgMath\RegArch16 v120\Obj\Debug\Win32\Error\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt cError.cpp
+         cError.cpp
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"C:\Users\ensimag\Documents\ProgMath\RegArch16 v120\Lib\Debug\Win32\Error.lib" /NOLOGO "C:\Users\ensimag\Documents\ProgMath\RegArch16 v120\Obj\Debug\Win32\Error\cError.obj"
+         "C:\Users\ensimag\Documents\ProgMath\RegArch16 v120\Obj\Debug\Win32\Error\StdAfxError.obj"
+         Error.vcxproj -> C:\Users\ensimag\Documents\ProgMath\RegArch16 v120\Lib\Debug\Win32\Error.lib
+     1>Génération du projet "C:\Users\ensimag\Documents\ProgMath\RegArch16 v120\Error\Error.vcxproj" terminée (Build cible(s)).
+
+La génération a réussi.
+
+Temps écoulé 00:00:01.45
