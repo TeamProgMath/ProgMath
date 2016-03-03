@@ -25,32 +25,31 @@ namespace RegArchLib {
 		cDVector mvArch ; ///< Vector of ARCH coefficients. 
 		cDVector mvGarch ; ///< Vector of GARCH coefficients.
 	public :
-		cGarch(uint theNArch = 0, uint theNGarch=0) ; ///< A simple constructor
-		cGarch(double theConst, cDVector& theArch, cDVector& theGarch) ; ///< Another constructor
-		cGarch(const cGarch& theGarch);
+		cGarch(uint theNGarch =0);
+		cGarch(cDVector & theGarch);
+		//cGarch(uint theNArch = 0, uint theNGarch=0) ; ///< A simple constructor
+		//cGarch(double theConst, cDVector& theArch, cDVector& theGarch) ; ///< Another constructor
+		//cGarch(cAbstCondVar& theGarch);
 		virtual ~cGarch() ; ///< A simple destructor
 		virtual cAbstCondVar* PtrCopy() const ; /// < Return a copy of *this				
 		void Delete(void) ; /// Delete
-	#ifndef _RDLL_
-		void Print(ostream& theOut = cout) const; ///< print the parameters
-	#else
-		void Print(void);
-	#endif //_RDLL_
-		void SetDefaultInitPoint(double theMean, double theVar) ;
+		void Print(ostream& theOut=cout) const ; ///< Print the parameters
+		//void SetDefaultInitPoint(double theMean, double theVar) ;
 		void ReAlloc(const uint theSize, const uint theNumParam=0) ; ///< Allocation of the model parameters
 		void ReAlloc(const cDVector& theVectParam, const uint theNumParam=0) ; ///< Allocation of the model parameters
 		void Set(const double theValue, const uint theIndex=0, const uint theNumParam=0) ; ///< Set model parameters.
 		void Set(const cDVector& theVectParam, const uint theNumParam=0) ; ///< Set model parameters.
 		double Get(const uint theIndex=0, const uint theNumParam=0) ;
-		cGarch& operator=(const cGarch& theSrc); ///< Standard affectation
+		cAbstCondVar& operator=(cAbstCondVar& theSrc); ///< Standard affectation
 		void UpdateProxyVarParameters(void) {}; 
 		double ComputeVar(uint theDate, const cRegArchValue& theData) const;	///< Return conditional variance.
 		uint GetNParam(void) const ; ///< Number of parameters in that model part
 		uint GetNLags(void) const ; ///< Number of past gradients required to compute gradient at current time t.
-		void ComputeGrad(uint theDate, const cRegArchValue& theData, cRegArchGradient& theGradData, cAbstResiduals* theResiduals) ;
+		void ComputeGrad(uint theDate, const cRegArchValue& theData, cRegArchGradient& theGradData, uint theBegIndex, cAbstResiduals* theResiduals) ;
 		void RegArchParamToVector(cDVector& theDestVect, uint theIndex) ;
 		void VectorToRegArchParam(const cDVector& theSrcVect, uint theIndex = 0) ;
 		void ComputeHess(uint theDate, const cRegArchValue& theData, cRegArchGradient& theGradData, cRegArchHessien& theHessData, cAbstResiduals* theResiduals);
+		void copy(const cGarch & theGarch);
 	} ;
 
 }
