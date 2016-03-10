@@ -48,6 +48,7 @@
     <ClCompile Include="cMa.cpp" />
     <ClCompile Include="cNormResiduals.cpp" />
     <ClCompile Include="cRegArchGradient.cpp" />
+    <ClCompile Include="cRegArchHessien.cpp" />
     <ClCompile Include="cRegArchModel.cpp" />
     <ClCompile Include="cRegArchValue.cpp" />
     <ClCompile Include="cStudentResiduals.cpp" />

@@ -65,6 +65,9 @@
     <ClCompile Include="cAbstCondMean.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="cRegArchHessien.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cAbstCondMean.h">

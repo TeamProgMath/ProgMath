@@ -35,6 +35,7 @@ namespace RegArchLib {
 //		virtual cAbstCondMean& operator=(cAbstCondMean& theSrc) = 0; ///< = operator for cAbstCondMean
 		virtual void Delete(void) = 0 ; ///< Free memory
 		virtual void Print(ostream& theOut=cout) const = 0 ; ///< Print the parameters
+		void Print(void) const; ///< Print the parameters
 		friend  _DLLEXPORT_  ostream& operator <<(ostream& theOut, const cAbstCondMean& theAbstCondMean) ; ///< Print the parameters
 		virtual void Set(const double theValue, const uint theIndex=0, const uint theNumParam=0) = 0 ; ///< Set model parameters.
 		virtual void Set(const cDVector& theVectParam, const uint theNumParam=0) = 0 ; ///< Set model parameters.
