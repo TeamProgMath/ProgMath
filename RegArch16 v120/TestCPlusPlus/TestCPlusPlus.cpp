@@ -13,25 +13,25 @@ using namespace RegArchLib ;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	cout.precision(12) ; 
+	//cout.precision(12) ; 
 	/*
 cFigarch myFigarch(1, 1, 0.5, 100);
 	myFigarch.Set(.1, 0, 0);
 	myFigarch.Set(.1, 0, 1);
 	myFigarch.Set(.8, 0, 2);*/
 
-cAr	myAr(2) ;
+//cAr	myAr(2) ;
 
-	myAr.Set(.8, 0) ;
-	myAr.Set(-.2, 1) ;
+	//myAr.Set(.8, 0) ;
+	//myAr.Set(-.2, 1) ;
 //	myAr.Print() ;
 
 
-cMa myMa(1) ;
-	myMa.Set(0.8, 0) ;
+//cMa myMa(1) ;
+	//myMa.Set(0.8, 0) ;
 //	myMa.Set(0.6, 1) ;
 
-cCondMean myCondMean ;
+//cCondMean myCondMean ;
 	//myCondMean.SetOneMean(0, myAr) ;
 
 	//myCondMean.SetOneMean(1, myMa) ;
@@ -54,7 +54,7 @@ cCondMean myCondMean ;
 
 //cConstCondVar myConstVar(1.0) ;
 
-cStudentResiduals myStudent(5, true) ;
+/*cStudentResiduals myStudent(5, true) ;
 cNormResiduals myNormResid ;
 
 cConstCondVar myConstVar(1.0) ;
@@ -129,11 +129,11 @@ cConst myConst(100.0) ;
 //cVarInMean myVarInMean(0.4) ;
 
 
-
+/*
 uint myNSimul = 10000;
 cRegArchValue myValue(myNSimul) ;
 	RegArchSimul(myNSimul, myModel, myValue) ;
-
+	*/
 
 
 /*
@@ -145,7 +145,7 @@ ofstream myFile;
 	return 0;
 */
 	
-	cRegArchModel myResModel(myModel);
+	/*cRegArchModel myResModel(myModel);
 uint myNParam = myModel.GetNParam();
 cNLOPTResult myResStruct(myNParam);
 cNLOPTAlgoParam* myAlgoParam = new cNLOPTAlgoParam();
@@ -154,10 +154,10 @@ cNLOPTAlgoParam* myAlgoParam = new cNLOPTAlgoParam();
 	myAlgoParam->mMinimisation = false;
 	myAlgoParam->mStopVal = 1e299;
 	myAlgoParam->mfTol = 1e-6;
-	myAlgoParam->mxTol = 1e-6;
+	myAlgoParam->mxTol = 1e-6;*/
 
 	
-cDVector myInitPoint = cDVector(myNParam, 0.0) ;
+	//cDVector myInitPoint = cDVector(myNParam, 0.0) ;
 // Ox Garch init value
 /*)
 
@@ -170,7 +170,7 @@ GARCH(Beta1)         0.400000
 
 */
 	//myInitPoint[0] = 10;
-	myInitPoint[0] = 0.04;
+	/*myInitPoint[0] = 0.04;
 	myInitPoint[1] = 0.1;
 	myInitPoint[2] = 0.4;
 	myInitPoint[3] = 0.45;
@@ -260,20 +260,20 @@ double myMeanSerie, myVarSerie ;
 myValue.ComputeMeanAndVar(myMeanSerie, myVarSerie) ;
 myResModel.mMean->SetDefaultInitPoint(myMeanSerie, myVarSerie) ;
 myResModel.mVar->SetDefaultInitPoint(myMeanSerie, myVarSerie);
-myResModel.Print() ;
+myResModel.Print() ;*/
 
 		ofstream fichier("../test.txt", ios::out | ios::trunc);  // ouverture en écriture avec effacement du fichier ouvert
  
         if(fichier)
         {
-                fichier <<	myValue.mYt << endl; 
+                //fichier <<	myValue.mYt << endl; 
                 fichier.close();
         }
         else
                 cerr << "Impossible d'ouvrir le fichier !" << endl; 
 
 
-*/
+
 
 
 }
