@@ -35,6 +35,7 @@
 #include "cStdDevInMean.h"
 #include "cVarInMean.h"
 #include "cLinReg.h"
+#include "cArfima.h"
 
 #include "cConstCondVar.h"
 #include "cArch.h"
@@ -50,6 +51,7 @@
 #include "GslAndNloptOptim.h"
 
 #include "cCondMean.h"
+#include "cCondVar.h"
 #include "RegArchCompute.h"
 #include "cRegArchModel.h"
 #include "cRegArchValue.h"

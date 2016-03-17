@@ -59,5 +59,92 @@ namespace RegArchLib {
 		return theOut ;
 	}
 
+	template<class T>
+	static T* TemplateCreateOneRealCondMean(void)
+	{
+		T*	myCondMean = new T();
+		return myCondMean;
+	}
+
+	template<class T>
+	static T* TemplateCreateOneRealCondMean(cAbstCondMean& theAbstCondMean)
+	{
+	T* mySrc = static_cast<T *>(&theAbstCondMean);
+	
+	if (mySrc)
+	{
+		T* myCondMean;
+		myCondMean = new T(*mySrc);
+		return myCondMean;
+	}
+	else
+		throw cError("Wrong contional mean in TemplateCreateOneRealCondMean");
+	}
+
+	/*!
+	* \fn cAbstCondMean* CreateOneRealCondMean(const eCondMeanEnum theType)
+	* \param const eCondMeanEnum theType: code of the real condtional mean component.
+	* \details This function has to be changed when adding a new conditional mean type.
+	*/
+	_DLLEXPORT_ cAbstCondMean* CreateOneRealCondMean(const eCondMeanEnum theType)
+	{
+		switch (theType)
+		{
+		case eConst:
+			return TemplateCreateOneRealCondMean<cConst>();
+			break;
+		case eAr:
+			return TemplateCreateOneRealCondMean<cAr>();
+			break;
+		case eMa:
+			return TemplateCreateOneRealCondMean<cMa>();
+			break;
+		case eLinReg:
+			return TemplateCreateOneRealCondMean<cLinReg>();
+			break;
+		case eStdDevInMean:
+			return TemplateCreateOneRealCondMean<cStdDevInMean>();
+			break;
+		case eVarInMean:
+			return TemplateCreateOneRealCondMean<cVarInMean>();
+			break;
+
+		default:
+			throw cError("CreateOneRealCondMean: unknown conditional mean type");
+			break;
+		}
+	}
+
+	_DLLEXPORT_ cAbstCondMean* CreateOneRealCondMean(cAbstCondMean& theAbstCondMean)
+	{
+		switch (theAbstCondMean.GetCondMeanType())
+		{
+		case eConst:
+			return TemplateCreateOneRealCondMean<cConst>(theAbstCondMean);
+			break;
+		case eAr:
+			return TemplateCreateOneRealCondMean<cAr>(theAbstCondMean);
+			break;
+		case eMa:
+			return TemplateCreateOneRealCondMean<cMa>(theAbstCondMean);
+			break;
+		case eLinReg:
+			return TemplateCreateOneRealCondMean<cLinReg>(theAbstCondMean);
+			break;
+		case eStdDevInMean:
+			return TemplateCreateOneRealCondMean<cStdDevInMean>(theAbstCondMean);
+			break;
+		case eVarInMean:
+			return TemplateCreateOneRealCondMean<cVarInMean>(theAbstCondMean);
+			break;
+		case eArfima:
+			return TemplateCreateOneRealCondMean<cArfima>(theAbstCondMean);
+			break;
+		default:
+			throw cError("CreateOneRealCondMean: unknown conditional mean type");
+			break;
+		}
+	}
+
 	
 }//namespace

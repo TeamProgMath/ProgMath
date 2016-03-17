@@ -40,7 +40,11 @@ namespace RegArchLib {
 		void SetSimul(void) ; ///< Change for simulation
 		double Get(const uint theIndex=0) ;
 		void Set(double theValue, const uint theIndex=0) ;
-		virtual void Print(ostream& theOut=cout) const=0 ; ///< Print the distribution type
+	#ifndef _RDLL_
+		virtual void Print(ostream& theOut = cout) const=0; ///< print the parameters
+	#else
+		virtual void Print(void)=0;
+	#endif //_RDLL_
 		friend ostream& operator <<(ostream& theOut, const cAbstResiduals& theAbstResisuals) ; ///< Print the distribution type
 		virtual void Generate(const uint theNSample, cDVector& theYt) const=0; ///< Draw a sample from residual distribution 
 		virtual double LogDensity(double theX) const=0 ; ///< log density function

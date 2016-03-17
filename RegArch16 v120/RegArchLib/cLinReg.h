@@ -20,19 +20,22 @@ namespace RegArchLib {
 		cDVector mvBeta ;
 	public :
 		cLinReg(int theNLinReg = 0) ;
-		cLinReg(cAbstCondMean& theAbstCondMean) ; /// Recopy constructor
+		cLinReg(const cLinReg& theLinReg) ; /// Recopy constructor
 		virtual ~cLinReg() ;
 		cAbstCondMean* PtrCopy(void) const ; /// < Return a copy of *this
 		void Delete(void) ;
-		void Print(ostream& theOut) const ;
-		void Print(void) const ; ///< print the parameters
+		void Print(ostream& theOut=cout) const ;
+	#ifdef _RDLL_
+		void Print(void) const;
+	#endif //_RDLL_
 		void SetDefaultInitPoint(double theMean, double theVar) ;
 		void Set(const double theValue, const uint theIndex=0, const uint theNumParam=0)  ; ///< Set model parameters.
 		void Set(const cDVector& theVectParam, const uint theNumParam=0) ; ///< Set model parameters.
 		double Get(const uint theIndex=0, const uint theNumParam=0) ;
 		void ReAlloc(const cDVector& theParam, const uint theNumParam=0) ;
 		void ReAlloc(const uint theParam, const uint theNumParam=0) ;
-		cAbstCondMean& operator=(cAbstCondMean& theSrc) ;
+		cLinReg& operator=(const cLinReg& theSrc) ;
+		void UpdateProxyMeanParameters(void) {};
 		double ComputeMean(uint theDate, const cRegArchValue& theData) const ;
 		uint GetNParam(void) const ; ///< Return number of parameters
 		uint GetNLags(void) const ;

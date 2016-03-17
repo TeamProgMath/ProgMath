@@ -12,8 +12,7 @@ namespace RegArchLib {
 	 * \param int theNMa: number of lags.
 	 */
 
-	cMa::cMa(uint theNMa)
-	:cAbstCondMean(eMa) // call constructor of cAbstCondMean with type eMa
+	cMa::cMa(uint theNMa):cAbstCondMean(eMa)
 	{
 		mvMa.ReAlloc(theNMa) ;
 		MESS_CREAT("cMa")
@@ -23,10 +22,19 @@ namespace RegArchLib {
 	 * \fn cMa::cMa(const cDVector& theMa):cAbstCondMean(eMa)
 	 * \param const cDVector& theAr: vector of AR coefficients.
 	 */
-	cMa::cMa(const cDVector& theMa)
-	:cAbstCondMean(eMa) // call constructor of cAbstCondMean with type eMa
+	cMa::cMa(const cDVector& theMa):cAbstCondMean(eMa)
 	{
 		mvMa = theMa ;
+		MESS_CREAT("cMa")
+	}
+
+	/*!
+	 * \fn cMa::cMa(cAbstCondMean& theAbstCondMean)
+	 * \param const cAbstCondMean& theAbstCondMean: the cMa source.
+	 */
+	cMa::cMa(const cMa& theMa):cAbstCondMean(eMa)
+	{
+		*this = theMa;
 		MESS_CREAT("cMa")
 	}
 
@@ -40,15 +48,14 @@ namespace RegArchLib {
 	}
 
 	/*!
-	 * \fn cAbstCondMean* cMa::PtrCopy()
+	 * \fn cAbstCondMean cMa::PtrCopy(void)
+	 * \param void
 	 */
-	cAbstCondMean* cMa::PtrCopy() const
+	cAbstCondMean* cMa::PtrCopy(void) const
 	{
-		 cMa *mycMa = new cMa();
+	cMa* myMa = new cMa(*this) ;
 
-		 mycMa->copy(*this);
-
-		 return mycMa;
+		return myMa ;
 	}
 
 	/*!
@@ -64,6 +71,7 @@ namespace RegArchLib {
 	 * \fn void cMa::Print(ostream& theOut) const
 	 * \param ostream& theOut: the output stream, default cout.
 	 */
+#ifndef _RDLL_
 	void cMa::Print(ostream& theOut) const
 	{
 	uint myNMa = mvMa.GetSize();
@@ -71,15 +79,30 @@ namespace RegArchLib {
 		for (register uint i = 0 ; i <  myNMa ; i++)
 			theOut << "\tMA[" << i+1 << "]=" << mvMa[i] << endl ;
 	}
+#else
+	void cMa::Print(void)
+	{
+	uint myNMa = mvMa.GetSize();
+		Rprintf("MA(%d) model with:", myNMa);
+		for (register uint i = 0; i < myNMa; i++)
+			Rprintf("\tMA[%d]=%f", i + 1, mvMa[i]);
+	}
+#endif //_RDLL_
 
+	void cMa::SetDefaultInitPoint(double theMean, double theVar)
+	{
+	uint myNMa = mvMa.GetSize() ;
+		for (register uint i = 0 ; i < myNMa ; i++)
+			mvMa[i] = 0.0 ;
+	}
 	/*!
-	 * \fn void cMa::Set(double theValue, uint theIndex=0, uint theNumParam)
-	 * \param double theValue: the theIndex th value
-	 * \param uint theIndex: the index
-	 * \param uint theNumParam: not used here
+	 * \fn void cMa::Set(const double theValue, const uint theIndex=0, const uint theNumParam)
+	 * \param const double theValue: the theIndex th value
+	 * \param const uint theIndex: the index
+	 * \param const uint theNumParam: not used here
 	 * \details mvMa[theIndex] = theValue
 	 */
-	void cMa::Set(double theValue, uint theIndex, uint theNumParam)
+	void cMa::Set(const double theValue, const uint theIndex, const uint theNumParam)
 	{
 		if (theIndex >= mvMa.GetSize())
 			throw cError("Bad index") ;
@@ -88,41 +111,52 @@ namespace RegArchLib {
 	}
 
 	/*!
-	 * \fn void cMa::Set(const cDVector& theVectParam, uint theNumParam)
+	 * \fn void cMa::Set(const cDVector& theVectParam, const uint theNumParam)
 	 * \param const cDVector& theVectParam: the vector of MA coefficients
-	 * \param uint theNumParam: not used here
+	 * \param const uint theNumParam: not used here
 	 * \details mvMa = theVectParam
 	 */
-	void cMa::Set(const cDVector& theVectParam, uint theNumParam)
+	void cMa::Set(const cDVector& theVectParam, const uint theNumParam)
 	{
 		mvMa=theVectParam ;
 	}
 
-	double cMa::Get(uint theIndex, uint theNumParam)
+	double cMa::Get(const uint theIndex, const uint theNumParam)
 	{
 		return mvMa[theIndex] ;
 	}
 
 	/*!
-	 * \fn void cMa::ReAlloc(uint theSize, uint theNumParam)
-	 * \param uint theSize: new size of mvMA
-	 * \param uint theNumParam; not used here.
+	 * \fn void cMa::ReAlloc(const uint theSize, const uint theNumParam)
+	 * \param const uint theSize: new size of mvMA
+	 * \param const uint theNumParam; not used here.
 	 * \details new allocation of mvMa 
 	 */
-	void cMa::ReAlloc(uint theSize, uint theNumParam)
+	void cMa::ReAlloc(const uint theSize, const uint theNumParam)
 	{
 		mvMa.ReAlloc(theSize) ;
 	}
 
 	/*!
-	 * \fn void cAr::ReAlloc(const cDVector& theVectParam, uint theNumParam)
+	 * \fn void cAr::ReAlloc(const cDVector& theVectParam, const uint theNumParam)
 	 * \param const cDVector& theVectParam: the vector of AR coefficients
-	 * \param uint theNumParam: not used here.
+	 * \param const uint theNumParam: not used here.
 	 * \details new allocation of mvAr
 	 */
-	void cMa::ReAlloc(const cDVector& theVectParam, uint theNumParam)
+	void cMa::ReAlloc(const cDVector& theVectParam, const uint theNumParam)
 	{
 		mvMa = theVectParam ;
+	}
+
+	/*!
+	 * \fn cAbstCondMean& cAr::operator =(cAbstCondMean& theSrc)
+	 * \param cAbstCondMean& theSrc: source to be recopied
+	 * \details An error occurs if theSrc is not an cAr class parameter
+	 */
+	cMa& cMa::operator =(const cMa& theSrc)
+	{
+		mvMa = theSrc.mvMa ;
+		return *this ;
 	}
 
 	/*!
@@ -133,11 +167,11 @@ namespace RegArchLib {
 	 */
 	double cMa::ComputeMean(uint theDate, const cRegArchValue& theData) const
 	{
-		uint myq = mvMa.GetSize() ;
+	uint myq = mvMa.GetSize() ;
 
-		double myRes = 0.0 ;
-			for (register uint i = 1 ; i <= MIN(myq, theDate) ; i++)
-				myRes += mvMa[i-1] * theData.mUt[theDate-i] ;
+	double myRes = 0.0 ;
+		for (register uint i = 1 ; i <= MIN(myq, theDate) ; i++)
+			myRes += mvMa[i-1] * theData.mUt[theDate-i] ;
 		return myRes ;
 	}
 
@@ -145,6 +179,7 @@ namespace RegArchLib {
 	{
 		return mvMa.GetSize() ;
 	}
+	
 	uint cMa::GetNLags(void) const
 	{
 		return mvMa.GetSize() ;
@@ -156,33 +191,17 @@ namespace RegArchLib {
 	register uint i ;
 		for (i = 1 ; i <= MIN(myq, theDate) ; i++)
 			theGradData.mCurrentGradMu[theBegIndex+i-1] += theValue.mUt[theDate - i] ;
-		for (i = 1 ; i <= MIN(myq, theDate) ; i++)
-			theGradData.mCurrentGradMu -=  mvMa[i-1] * theGradData.mGradMt[i-1] ;
+		for (i = 0 ; i < MIN(myq, theDate) ; i++)
+			theGradData.mCurrentGradMu -=  mvMa[i] * theGradData.mGradMt[i] ;
 	}
 
-	void cMa::ComputeHess(uint theDate, const cRegArchValue & theData, cRegArchGradient & theGradData, cRegArchHessien & theHessData, uint theBegIndex, cAbstResiduals * theResiduals)
+	void cMa::ComputeHess(uint theDate, const cRegArchValue& theData, cRegArchGradient& theGradData,cRegArchHessien& theHessData, uint theBegIndex, cAbstResiduals* theResiduals) 
 	{
-		uint myq = mvMa.GetSize();
-		register uint i;
-		register uint j;
-		// for every element
-		for (i = 1; i <= MIN(myq, theDate); i++)
-			theHessData.mCurrentHessMu -= mvMa[i - 1] * theHessData.mHessMt[i - 1];
-		// for Ma coefficients ( 1st part: with grad)
-		for (i = 1; i <= MIN(myq, theDate); i++)
-			for (j = 1; j <= MIN(myq, theDate); j++)
-				theHessData.mCurrentHessMu[theBegIndex + i - 1][theBegIndex + j - 1] -= theGradData.mGradMt[theDate - j][theDate - i];
-		// for Ma coefficients (if we derivate first according to MA coefficients  )
-		for (i = 1; i <= MIN(myq, theDate); i++)
-			for (j = 1; j <= MIN(myq, theDate); j++)
-				theHessData.mCurrentHessMu[theBegIndex + i - 1][theBegIndex + j - 1] -= theGradData.mGradMt[theDate - i][theBegIndex + j - 1];
-
-		
 	}
 
 	void cMa::RegArchParamToVector(cDVector& theDestVect, uint theIndex)
 	{
-		uint mySize = mvMa.GetSize() ;
+	uint mySize = mvMa.GetSize() ;
 		if (theDestVect.GetSize() < mySize + theIndex)
 			throw cError("Wrong size") ;
 		mvMa.SetSubVectorWithThis(theDestVect, theIndex) ;
@@ -190,15 +209,10 @@ namespace RegArchLib {
 
 	void cMa::VectorToRegArchParam(const cDVector& theSrcVect, uint theIndex)
 	{
-		uint mySize = theSrcVect.GetSize() ;
+	uint mySize = theSrcVect.GetSize() ;
 		if (mvMa.GetSize() + theIndex > mySize)
 			throw cError("Wrong size") ;
 		mvMa.SetThisWithSubVector(theSrcVect, theIndex) ;
-	}
-
-	void cMa::copy(const cMa& theMa)
-	{
-		mvMa = theMa.mvMa;
 	}
 
 }//namespace

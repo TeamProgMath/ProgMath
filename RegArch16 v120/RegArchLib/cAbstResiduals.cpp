@@ -23,7 +23,7 @@ namespace RegArchLib {
 		#ifndef _DEBUG
 			gsl_rng_set(mtR, (unsigned long int)time(NULL)) ;
 		#else
-			gsl_rng_set(mtR, 0) ; // Pour avoir toujours la meme serie simulee quand on teste
+			gsl_rng_set(mtR, 0) ; // Pour avoir toujours la m�me s�rie simul�e quand on teste
 		#endif // _DEBUG
 		}
 		else
@@ -65,6 +65,7 @@ namespace RegArchLib {
 			mtR = NULL ;
 		}
 	}
+
 	/*!
 	 * \fn cAbstResiduals::SetSimul(void)
 	 * \param void
@@ -85,6 +86,12 @@ namespace RegArchLib {
 	}
 
 	/*!
+	 * \fn cAbstResiduals& cAbstResiduals::operator =(const cAbstResiduals& theSrc)
+	 * \param const cAbstResiduals& theSrc
+	 */
+
+
+	/*!
 	 * \fn inline eDistrTypeEnum cAbstResiduals::GetDistrType(void) const
 	  * \param void
 	 */
@@ -93,7 +100,7 @@ namespace RegArchLib {
 	}
 
 
-	double cAbstResiduals::Get(uint theIndex)
+	double cAbstResiduals::Get(const uint theIndex)
 	{
 		if (mDistrParameter.GetSize() > theIndex)
 			return mDistrParameter[theIndex] ;
@@ -101,7 +108,7 @@ namespace RegArchLib {
 			throw cError("Wrong size in cAbstResiduals::Get") ;
 	}
 
-	void cAbstResiduals::Set(double theValue, uint theIndex)
+	void cAbstResiduals::Set(double theValue, const uint theIndex)
 	{
 		if (mDistrParameter.GetSize() <= theIndex)
 		{	mDistrParameter.ReAlloc(theIndex+1) ;
@@ -121,6 +128,95 @@ namespace RegArchLib {
 		return theOut ;
 	}
 
+	template<class T>
+	static T* TemplateCreateRealCondResiduals(cAbstResiduals& theAbstCondResiduals)
+	{
+		T*	myCondResiduals = new T();
+		*(cAbstResiduals *)myCondResiduals = theAbstCondResiduals;
+		return myCondResiduals;
+	}
+	/*!
+	* \fn template<class T> static T* TemplateCreateRealCondResiduals(const cDVector* theDistrParam, const bool theSimulFlag)
+	* \param const cDVector* theDistrParam: vector of parameters
+	* \param const bool theSimulFlag: true if created for simulation
+	*/
+	template<class T>
+	static T* TemplateCreateRealCondResiduals(cDVector* theDistrParam, bool theSimulFlag)
+	{
+		T*	myCondResiduals = new T(theDistrParam, theSimulFlag);
+		return myCondResiduals;
+	}
+
+	/*!
+	* \fn cAbstResiduals* CreateRealCondResiduals(eDistrTypeEnum theType, cDVector* theDistrParam, bool theSimulFlag)
+	* \param eDistrTypeEnum theType: type of conditional residuals.
+	* \param cDVector* theDistrParam: distribution parameters. Default NULL
+	* \param bool theSimulFlag. True if created for simulation. Default true.
+	* \details
+	* This function has to be changed when adding a new conditional residuals type.
+	*/
+	cAbstResiduals* CreateRealCondResiduals(eDistrTypeEnum theType, cDVector* theDistrParam, bool theSimulFlag)
+	{
+		switch (theType)
+		{
+		case eNormal:
+			return TemplateCreateRealCondResiduals<cNormResiduals>(NULL, theSimulFlag);
+			break;
+		case eStudent:
+			if (theDistrParam == NULL)
+			{
+				cDVector myParam = cDVector(3, 0.0);
+				return TemplateCreateRealCondResiduals<cStudentResiduals>(&myParam, theSimulFlag);
+			}
+			else
+				return TemplateCreateRealCondResiduals<cStudentResiduals>(theDistrParam, theSimulFlag);
+			break;
+
+		case eGed:
+			// A FAIRE plus tard
+			break;
+		case eSkewT:
+			// A FAIRE PLUS TARD
+			break;
+
+		default:
+			cError myError("CreateRealCondResiduals: unknown conditional distribution type");
+			break;
+		}
+	}
+
+
+	/*!
+	* \fn cAbstResiduals* CreateRealCondResiduals(eDistrTypeEnum theType, cDVector* theDistrParam, bool theSimulFlag)
+	* \param eDistrTypeEnum theType: type of conditional residuals.
+	* \param cDVector* theDistrParam: distribution parameters. Default NULL
+	* \param bool theSimulFlag. True if created for simulation. Default true.
+	* \details
+	* This function has to be changed when adding a new conditional residuals type.
+	*/
+	cAbstResiduals* CreateRealCondResiduals(cAbstResiduals& theAbstCondResiduals)
+	{
+		switch (theAbstCondResiduals.GetDistrType())
+		{
+		case eNormal:
+			return TemplateCreateRealCondResiduals<cNormResiduals>(theAbstCondResiduals);
+			break;
+		case eStudent:
+			return TemplateCreateRealCondResiduals<cStudentResiduals>(theAbstCondResiduals);
+			break;
+
+		case eGed:
+			// A FAIRE plus tard
+			break;
+		case eSkewT:
+			// A FAIRE PLUS TARD
+			break;
+
+		default:
+			cError myError("CreateRealCondResiduals: unknown conditional distribution type");
+			break;
+		}
+	}
 
 } // namespace
 

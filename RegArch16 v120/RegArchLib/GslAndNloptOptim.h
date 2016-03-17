@@ -16,6 +16,8 @@ namespace RegArchLib {
 	typedef struct sParamOptimStruct
 	{	cRegArchModel*		mParam ;
 		cRegArchValue*		mValue ;
+		bool				mVerbose;
+		int					mNFuncEval;
 	}sParamOptimStruct, *pParamOptimPtr ;
 
 	#ifdef _RDLL_

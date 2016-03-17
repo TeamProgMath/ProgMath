@@ -14,58 +14,44 @@ using namespace RegArchLib ;
 int _tmain(int argc, _TCHAR* argv[])
 {
 	cout.precision(12) ; 
-	/*
-cFigarch myFigarch(1, 1, 0.5, 100);
-	myFigarch.Set(.1, 0, 0);
-	myFigarch.Set(.1, 0, 1);
-	myFigarch.Set(.8, 0, 2);*/
 
+	// mean cond
 	cAr	myAr(2) ;
-
 	myAr.Set(.8, 0) ;
 	myAr.Set(-.2, 1) ;
-	myAr.Print() ;
-
-	cMa myMa(1) ;
+	cMa myMa(2) ;
 	myMa.Set(0.8, 0) ;
 	myMa.Set(0.6, 1) ;
-
-	cCondMean myCondMean ;
-	myCondMean.SetOneMean(0, myAr) ;
-	myCondMean.SetOneMean(1, myMa) ;
-
-/*	cCondMean myCondMean1 = cCondMean(myCondMean) ;
-	cout << "CondMean :" << myCondMean << endl ;
-	cout << "CondMean1 : " <<  myCondMean1 << endl ;
-	myCondMean1.Delete() ;
-//	cout << "CondMean :" << myCondMean << endl ;
-//	cout << "CondMean1 : " <<  myCondMean1 << endl ;
-	myCondMean1 = myCondMean ;
-//	cout << "CondMean1 : " <<  myCondMean1 << endl ;
-*/
-
-/*cGarch myGarch(1,1) ;
-	myGarch.Set(0.1, 0, 0) ;
-	myGarch.Set(0.1, 0, 1) ;
-	myGarch.Set(0.8, 0, 2) ¨;*/
-
-
-//cConstCondVar myConstVar(1.0) ;
-
-	cStudentResiduals myStudent(5, true) ;
-	cNormResiduals myNormResid ;
-
-	cConstCondVar myConstVar(1.0) ;
 	cConst myConstMean(10.0);
-	cArch myArch(1);
-		myArch.Set(0.4, 0, 0);
-		myArch.Set(0.5, 0, 1);
+	cCondMean myCondMean ;
+	myCondMean.AddOneMean(myAr) ;
+	myCondMean.AddOneMean(myMa) ;
+	myCondMean.AddOneMean(myConstMean);
+	myCondMean.Print();
+	std::cin.get();
+
+	// residuals
+	cNormResiduals myNormResid;
+	myNormResid.Print();
+	std::cin.get();
 	
+	// var cond
+	cConstCondVar myConstVar(1.0) ;
+	cArch myArch(1);
+	myArch.Set(0.4, 0, 0);
+	myArch.Set(0.5, 0, 1);
+
+	// ??
 	cStdDevInMean myStdDevInMean(.6);
 	cVarInMean myVarInMean(.6);
-	cRegArchModel myModel ;
-	myModel.SetMean(myCondMean) ;
+	
+	// set model
+	cRegArchModel myModel;
+	myModel.SetMean(myCondMean);
+	myModel.SetResid(myNormResid);
+	myModel.SetVar(myConstVar);
 	myModel.AddOneMean(myConstMean);
+
 //	myModel.AddOneMean(myAr);
 
 //	myModel.PrintMean();
@@ -74,7 +60,7 @@ cFigarch myFigarch(1, 1, 0.5, 100);
 	
 //	myModel.AddOneMean(myMa);
 //	myModel.SetResid(myStudent) ;
-	myModel.SetResid(myNormResid);
+//	myModel.SetResid(myNormResid);
 //	myModel.SetVar(myGarch);
 //	myModel.SetVar(myConstVar);	
 	
@@ -126,13 +112,12 @@ cConst myConst(100.0) ;
 */
 //cVarInMean myVarInMean(0.4) ;
 
-
+	std::cin.get();
 
 	uint myNSimul = 10000;
 	cRegArchValue myValue(myNSimul);
 	RegArchSimul(myNSimul, myModel, myValue);
 	
-
 
 /*
 ofstream myFile;
@@ -234,7 +219,7 @@ for (register uint t = 0; t < myNSimul; t++)
 		cout << "Maxi = " << Maxi(Abs(myDiff)) << "\n" << endl;
 	}
 
-
+	getchar();
 	exit(0);
 
 /*

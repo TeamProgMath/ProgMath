@@ -35,8 +35,9 @@ namespace RegArchLib {
     	mCurrentGradVar.ReAlloc(mvNParam) ;
     	mCurrentGradSigma.ReAlloc(mvNParam) ;
     	mCurrentGradMu.ReAlloc(mvNParam) ;
-    	mCurrentGradDens.ReAlloc(mvNDistrParameter + 1) ;
+		mCurrentGradDens.ReAlloc(mvNParam);
     	mCurrentGradEps.ReAlloc(mvNParam) ;
+		mCurrentDiffLogDensity = 0.0;
     }
     
     cRegArchGradient::cRegArchGradient(cRegArchModel* theParam)
@@ -63,9 +64,10 @@ namespace RegArchLib {
     	mCurrentGradVar.ReAlloc(mvNParam) ;
     	mCurrentGradSigma.ReAlloc(mvNParam) ;
     	mCurrentGradMu.ReAlloc(mvNParam) ;
-    	mCurrentGradDens.ReAlloc(mvNDistrParameter + 1) ;
+		mCurrentGradDens.ReAlloc(mvNParam);
     	mCurrentGradEps.ReAlloc(mvNParam) ;
-    }
+		mCurrentDiffLogDensity = 0.0;
+	}
     
     cRegArchGradient::~cRegArchGradient()
     {
@@ -124,7 +126,7 @@ namespace RegArchLib {
     	mCurrentGradVar.ReAlloc(mvNParam) ;
     	mCurrentGradSigma.ReAlloc(mvNParam) ;
     	mCurrentGradMu.ReAlloc(mvNParam) ;
-    	mCurrentGradDens.ReAlloc(mvNDistrParameter + 1) ;
+		mCurrentGradDens.ReAlloc(mvNParam);
     	mCurrentGradEps.ReAlloc(mvNParam) ;
     }
     
@@ -133,7 +135,10 @@ namespace RegArchLib {
     	mvNPast = mvNParam = 0 ;
     	if (theParam != NULL)
     	{	mvNPast = theParam->GetNLags() ;
-    		mvNMeanParam = theParam->mMean->GetNParam() ;
+			if (theParam->mMean == NULL)
+				mvNMeanParam = 0;
+			else
+				mvNMeanParam = theParam->mMean->GetNParam();
     		mvNVarParam = theParam->mVar->GetNParam() ;
     		mvNDistrParameter = theParam->mResids->GetNParam() ;
     		mvNParam = mvNMeanParam + mvNVarParam + mvNDistrParameter ;
@@ -149,10 +154,26 @@ namespace RegArchLib {
     	mCurrentGradVar.ReAlloc(mvNParam) ;
     	mCurrentGradSigma.ReAlloc(mvNParam) ;
     	mCurrentGradMu.ReAlloc(mvNParam) ;
-    	mCurrentGradDens.ReAlloc(mvNDistrParameter + 1) ;
+		mCurrentGradDens.ReAlloc(mvNParam);
     	mCurrentGradEps.ReAlloc(mvNParam) ;
     }
     
+	void cRegArchGradient::ReInitialize(void)
+	{
+		for (register uint i = 0; i < mvNPast; i++)
+		{
+			mGradHt[i] = 0.0 ;
+			mGradMt[i] = 0.0 ;
+			mGradEpst[i] = 0.0 ;
+		}
+		mCurrentGradVar = 0.0 ;
+		mCurrentGradSigma = 0.0 ;
+		mCurrentGradMu = 0.0 ;
+		mCurrentGradDens = 0.0 ;
+		mCurrentGradEps = 0.0 ;
+		mCurrentDiffLogDensity = 0.0;
+	}
+
     uint cRegArchGradient::GetNPast(void)
     {
     	return mvNPast ;
@@ -177,8 +198,6 @@ namespace RegArchLib {
     {
     	return mvNDistrParameter ;
     }
-    
-    
     
     void cRegArchGradient::Update(void)
     {

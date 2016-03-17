@@ -28,11 +28,15 @@ namespace RegArchLib {
 		cDVector mvArchNeg ; ///< vector of TARCH coefficients.
 	public :
 		cTarch(int theNTarch = 0) ; ///< a simple constructor
-		cTarch(cAbstCondVar& theTarch);
+		cTarch(const cTarch& theTarch);
 		virtual ~cTarch() ; ///< a simple destructor
 		virtual cAbstCondVar* PtrCopy() const ; /// < Return a copy of *this				
 		void Delete(void) ; ///< delete
-		void Print(ostream& theOut=cout) const ; ///< print the parameters
+	#ifndef _RDLL_
+		void Print(ostream& theOut = cout) const; ///< print the parameters
+	#else
+		void Print(void);
+	#endif //_RDLL_
 		void SetDefaultInitPoint(double theMean, double theVar) ;
 		/** Change model parameters.
 		 * Vector of parameters is resized to size theParam[0] */
@@ -45,7 +49,7 @@ namespace RegArchLib {
 		void Set(const cDVector& theVectParam, const uint theNumParam=0) ; ///< Set model parameters.
 		double Get(const uint theIndex=0, const uint theNumParam=0) ;
 		void UpdateProxyVarParameters(void) {}; 
-		cAbstCondVar& operator=(cAbstCondVar& theSrc) ;
+		cTarch& operator=(const cTarch& theSrc) ;
 		/** Return conditional variance.
 		 * \param theDate Date for conditional variance computation
 		 * \param theValue Instance where the dataset is stored */
