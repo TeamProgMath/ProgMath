@@ -197,6 +197,18 @@ namespace RegArchLib {
 
 	void RegArchHessLt(int theDate, cRegArchModel& theParam, cRegArchValue& theValue, cRegArchGradient& theGradData, cRegArchHessien& theHessData, cDMatrix& theHesslt)
 	{	
+		cDVector theGradlt;
+		RegArchGradAndHessLt(theDate, theParam, theValue, theGradData, theHessData, theGradlt, theHesslt);
+	}
+
+	void NumericRegArchHessLt(int theDate, cRegArchModel& theParam, cRegArchValue* theValue, cRegArchGradient* theGradData, cDMatrix& theHesslt, double theh)
+	{
+
+	}
+
+	void RegArchGradAndHessLt(int theDate, cRegArchModel& theParam, cRegArchValue& theValue, cRegArchGradient& theGradData, cRegArchHessien& theHessData, cDVector& theGradlt, cDMatrix& theHesslt)
+	{	
+		// Grad
 		theHesslt = 0.0;
 		theValue.mHt[theDate] = theParam.mVar->ComputeVar(theDate, theValue); // mHt
 		if (theParam.mMean != NULL)
@@ -210,37 +222,28 @@ namespace RegArchLib {
 			theParam.mMean->ComputeGrad(theDate, theValue, theGradData, theParam.mResids); // mCurrentGradMu
 		theParam.mResids->ComputeGrad(theDate, theValue, theGradData); // mCurrentDiffLogDensity
 		theGradData.mCurrentGradEps = -1.0*(theValue.mEpst[theDate] * theGradData.mCurrentGradSigma + theGradData.mCurrentGradMu) / mySigmat; // mCurrentGradEps
-		
-
-		//theHesslt = (-1.0 / mySigmat2) * theGradData.mCurrentGradSigma * Transpose(theGradData.mCurrentGradSigma)
-
-		/*
-		theGradlt = 0.0;
-		theValue.mHt[theDate] = theParam.mVar->ComputeVar(theDate, theValue);
-		if (theParam.mMean != NULL)
-			theValue.mMt[theDate] = theParam.mMean->ComputeMean(theDate, theValue);
-		theValue.mUt[theDate] = theValue.mYt[theDate] - theValue.mMt[theDate];
-		double mySigmat = sqrt(theValue.mHt[theDate]);
-		theValue.mEpst[theDate] = theValue.mUt[theDate] / mySigmat;
-		theParam.mVar->ComputeGrad(theDate, theValue, theGradData, theParam.mResids);
-		theGradData.mCurrentGradSigma = theGradData.mCurrentGradVar / (2.0 * mySigmat);
-		if (theParam.mMean != NULL)
-			theParam.mMean->ComputeGrad(theDate, theValue, theGradData, theParam.mResids);
-		theParam.mResids->ComputeGrad(theDate, theValue, theGradData);
-		theGradData.mCurrentGradEps = -1.0*(theValue.mEpst[theDate] * theGradData.mCurrentGradSigma + theGradData.mCurrentGradMu) / mySigmat;
 		theGradlt = (-1.0 / mySigmat) * theGradData.mCurrentGradSigma + theGradData.mCurrentDiffLogDensity * theGradData.mCurrentGradEps + theGradData.mCurrentGradDens;
-		theLt = -0.5*log(theValue.mHt[theDate]) + theParam.mResids->LogDensity(theValue.mEpst[theDate]);
-		*/
-	}
 
-	void NumericRegArchHessLt(int theDate, cRegArchModel& theParam, cRegArchValue* theValue, cRegArchGradient* theGradData, cDMatrix& theHesslt, double theh)
-	{
-
-	}
-
-	void RegArchGradAndHessLt(int theDate, cRegArchModel& theParam, cRegArchValue& theValue, cRegArchGradient& theGradData, cRegArchHessien& theHessData, cDVector& theGradlt, cDMatrix& theHesslt)
-	{	
-
+		// Hess
+		theParam.mVar->ComputeHess(theDate, theValue, theGradData, theHessData, theParam.mResids); // mCurrentHessVar VERIFY
+		theHessData.mCurrentHessSigma = (1.0 / (2.0 * mySigmat)) *
+			(theHessData.mCurrentHessVar - 2 * theGradData.mCurrentGradSigma*Transpose(theGradData.mCurrentGradSigma)); // mCurrentHessSigma
+		if (theParam.mMean != NULL)
+			theParam.mMean->ComputeHess(theDate, theValue, theGradData, theHessData, theParam.mResids); // mCurrentHessMu VERIFY
+		theParam.mResids->ComputeHess(theDate, theValue, theGradData, theHessData, theParam.mResids); // mCurrentGradDiffLogDensity, mCurrentHessDens VERIFY TODO
+		theHessData.mCurrentHessEps = (1.0 / (mySigmat*mySigmat)) * theGradData.mCurrentGradSigma * Transpose(theGradData.mCurrentGradMu)
+			- (1.0 / mySigmat)*theHessData.mCurrentHessMu
+			+ (2.0 * theValue.mUt[theDate] / (mySigmat * mySigmat * mySigmat)) * theGradData.mCurrentGradSigma * Transpose(theGradData.mCurrentGradSigma)
+			+ (1.0 / (mySigmat * mySigmat)) * theGradData.mCurrentGradMu * Transpose(theGradData.mCurrentGradSigma)
+			- (theValue.mUt[theDate] / (mySigmat*mySigmat)) * theHessData.mCurrentHessSigma; // mCurrentHessEps
+		// formule finale
+		theHesslt = (-1.0 / (mySigmat*mySigmat)) * theGradData.mCurrentGradSigma * Transpose(theGradData.mCurrentGradSigma)
+			- (1.0 / mySigmat) * theHessData.mCurrentHessSigma
+			+ theParam.mResids->Diff2LogDensity(theValue.mEpst[theDate]) * theGradData.mCurrentGradEps * Transpose(theGradData.mCurrentGradEps)
+			+ theGradData.mCurrentDiffLogDensity * theHessData.mCurrentHessEps
+			+ theHessData.mCurrentGradDiffLogDensity * Transpose(theGradData.mCurrentGradEps)
+			+ theGradData.mCurrentGradEps * Transpose(theHessData.mCurrentGradDiffLogDensity)
+			+ theHessData.mCurrentHessDens;
 	}
 
 	void RegArchLtGradAndHessLt(int theDate, cRegArchModel& theParam, cRegArchValue& theValue, double& thelt, cRegArchGradient& theGradData, cRegArchHessien& theHessData, cDVector& theGradlt, cDMatrix& theHesslt)
