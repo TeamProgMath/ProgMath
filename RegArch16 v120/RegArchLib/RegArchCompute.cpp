@@ -6,35 +6,40 @@
 	\author Jean-Baptiste DURAND, Ollivier TARAMASCO 
 	\date dec-18-2006 - last change feb-18-2011
 */
+
+
 namespace RegArchLib {
 
 	/*!
-	 * \fn void RegArchSimul(uint theNSample, const cRegArchModel& theModel, cRegArchValue& theData)
-	 * \param uint theNSample: size of the sample
+	 * \fn void RegArchSimul(const uint theNSample, const cRegArchModel& theModel, cRegArchValue& theData)
+	 * \param const uint theNSample: size of the sample
 	 * \param const cRegArchModel& theModel: the RegArch model
 	 * \param cRegArchValue& theData: output parameter. The Y(t) values are stored in theData.mYt
 	 */
-	void RegArchSimul(uint theNSample, const cRegArchModel& theModel, cRegArchValue& theData)
+	void RegArchSimul(const uint theNSample, const cRegArchModel& theModel, cRegArchValue& theData)
 	{
 		theData.ReAlloc(theNSample) ;
 		theModel.mResids->Generate(theNSample, theData.mEpst) ;
+		theModel.mVar->UpdateProxyVarParameters();
+		if (theModel.mMean != NULL)
+			theModel.mMean->UpdateProxyMeanParameters();
 		for (register uint t = 0 ; t < theNSample ; t++)
 		{	theData.mHt[t] = theModel.mVar->ComputeVar(t, theData) ;
 			if (theModel.mMean != NULL)
-				theData.mMt[t] = theModel.mMean->ComputeMean(t, theData) ;
+			{	theData.mMt[t] = theModel.mMean->ComputeMean(t, theData) ;
+			}
 			theData.mUt[t] = sqrt(theData.mHt[t])*theData.mEpst[t] ;
 			theData.mYt[t] = theData.mMt[t] + theData.mUt[t] ;
 		}
 	}
 
-
-	/*!
-	 * \fn void RegArchSimul(uint theNSample, const cRegArchModel& theModel, cDVector& theYt)
-	 * \param uint theNSample: size of the sample
+   /*!
+	 * \fn void RegArchSimul(const uint theNSample, const cRegArchModel& theModel, cDVector& theYt)
+	 * \param const uint theNSample: size of the sample
 	 * \param const cRegArchModel& theModel: the RegArch model
 	 * \param cDVector& theYt: output parameter. 
 	 */
-	void RegArchSimul(uint theNSample, const cRegArchModel& theModel, cDVector& theYt)
+	void RegArchSimul(const uint theNSample, const cRegArchModel& theModel, cDVector& theYt)
 	{
 	cRegArchValue myValue(theNSample) ;
 		RegArchSimul(theNSample, theModel, myValue) ;
@@ -42,6 +47,24 @@ namespace RegArchLib {
 
 	}
 
+   /*!
+	* \fn static double ComputeLt(uint theDate, const cRegArchModel& theParam, cRegArchValue& theValue)
+	* \param uint theDate: the date
+	* \param const cRegArchModel& theParam: the model
+	* \param cRegArchValue& theValue: output parameter.
+	* \brief return the lt(theta ; Yt)
+	*/
+	static double ComputeLt(uint theDate, const cRegArchModel& theParam, cRegArchValue& theValue)
+	{
+		double myRes = 0;
+		theValue.mHt[theDate] = theParam.mVar->ComputeVar(theDate, theValue);
+		if (theParam.mMean != NULL)
+			theValue.mMt[theDate] = theParam.mMean->ComputeMean(theDate, theValue);
+		theValue.mUt[theDate] = theValue.mYt[theDate] - theValue.mMt[theDate];
+		theValue.mEpst[theDate] = theValue.mUt[theDate] / sqrt(theValue.mHt[theDate]);
+		myRes += -0.5*log(theValue.mHt[theDate]) + theParam.mResids->LogDensity(theValue.mEpst[theDate]);
+		return myRes;
+	}
 
 	/*!
 	 * \fn double RegArchLLH(const cRegArchModel& theParam, cDVector* theYt, cDMatrix* theXt)
@@ -67,6 +90,9 @@ namespace RegArchLib {
 	int mySize = (int)theData.mYt.GetSize() ;
 	double myRes = 0 ;
 		theData.mEpst = theData.mHt = theData.mMt = theData.mUt = 0.0 ;
+		theParam.mVar->UpdateProxyVarParameters();
+		if (theParam.mMean != NULL)
+			theParam.mMean->UpdateProxyMeanParameters();
 		for(register int t=0 ; t < mySize ; t++)
 		{	theData.mHt[t] = theParam.mVar->ComputeVar(t, theData) ;
 			if (theParam.mMean != NULL)
@@ -78,37 +104,43 @@ namespace RegArchLib {
 		return myRes ;
 	}
 
-	/*!
-	 * \fn void RegArchGradLt(int theDate, cRegArchModel& theParam, cRegArchValue& theValue, cRegArchGradient& theGradData, cDVector& theGradlt)
-	 * \brief Compute the gradient of the log-likelihood, at current time theDate
-	 * \param uint theDate: time at which conditional log-density is considered
-	 * \param const cRegArchModel& theParam: the model
-	 * \param cRegArchValue& theValue: contains the observations. Used to stored computed residuals, standardized residuals, etc.
-	 * \param cRegArchGradient& theGradData: contains the gradient of different components of the model, at current time theDate
-	 * \param cDVector& theGradlt: gradient of the log-likelihood, at current time theDate
-	 */
-
-	void RegArchGradLt(uint theDate, cRegArchModel& theParam, cRegArchValue& theValue, cRegArchGradient& theGradData, cDVector& theGradlt)
+	void RegArchGradLt(int theDate, cRegArchModel& theParam, cRegArchValue& theValue, cRegArchGradient& theGradData, cDVector& theGradlt)
 	{	theGradlt = 0.0 ;
 		theValue.mHt[theDate] = theParam.mVar->ComputeVar(theDate, theValue) ;
 		if (theParam.mMean != NULL)
 			theValue.mMt[theDate] = theParam.mMean->ComputeMean(theDate, theValue) ;
 		theValue.mUt[theDate] = theValue.mYt[theDate] - theValue.mMt[theDate] ;
-		double mySigmat = sqrt(theValue.mHt[theDate]) ;
+	double mySigmat = sqrt(theValue.mHt[theDate]) ;
 		theValue.mEpst[theDate] = theValue.mUt[theDate]/mySigmat ;
 		theParam.mVar->ComputeGrad(theDate, theValue, theGradData, theParam.mResids) ;
+		theGradData.mCurrentGradSigma = theGradData.mCurrentGradVar / (2.0 * mySigmat);
 		if (theParam.mMean != NULL)
 			theParam.mMean->ComputeGrad(theDate, theValue, theGradData, theParam.mResids) ;
 		theParam.mResids->ComputeGrad(theDate, theValue, theGradData) ;
-		theGradData.mCurrentGradSigma = theGradData.mCurrentGradVar / (2.0 * mySigmat) ;
 		theGradData.mCurrentGradEps = -1.0*(theValue.mEpst[theDate] * theGradData.mCurrentGradSigma + theGradData.mCurrentGradMu)/ mySigmat ;
-		theGradlt =  (-1.0/mySigmat) * theGradData.mCurrentGradSigma  + theGradData.mCurrentGradDens[0] * theGradData.mCurrentGradEps ;
-		uint myNLawParam = theGradData.GetNDistrParameter() ;
-		uint myIndex = theGradData.GetNMeanParam() + theGradData.GetNVarParam() ;
-		for (register uint i =  1 ; i <= myNLawParam ; i++)
-			theGradlt[i+myIndex-1] += theGradData.mCurrentGradDens[i] ;
-			// Update
-		theGradData.Update() ;
+		theGradlt =  (-1.0/mySigmat) * theGradData.mCurrentGradSigma  + theGradData.mCurrentDiffLogDensity * theGradData.mCurrentGradEps  + theGradData.mCurrentGradDens;
+	}
+	
+	void NumericRegArchGradLt(uint theDate, cRegArchModel& theParam, cRegArchValue* theValue, cDVector& theGradlt, double theh)
+	{
+	uint myNParam = theParam.GetNParam();
+	cDVector myParam(myNParam);
+	cDVector myParam1(myNParam);
+		theParam.RegArchParamToVector(myParam);
+	cRegArchModel myModel = cRegArchModel(theParam) ;
+		theGradlt.ReAlloc(myNParam);
+	double mylt0 = ComputeLt(theDate, theParam, theValue[myNParam]);
+		myModel.VectorToRegArchParam(myParam);
+		myParam1 = myParam;
+		for (register uint i = 0; i < myNParam; i++)
+		{
+		double myh1 = abs(myParam[i] * theh);
+			myParam1[i] += myh1;
+			myModel.VectorToRegArchParam(myParam1);
+		double mylt1 = ComputeLt(theDate, myModel, theValue[i]);
+			theGradlt[i] = (mylt1 - mylt0) / myh1;
+			myParam1[i] -= myh1;
+		}
 	}
 
 	void RegArchLtAndGradLt(int theDate, cRegArchModel& theParam, cRegArchValue& theValue, cRegArchGradient& theGradData, double& theLt, cDVector& theGradlt)
@@ -121,30 +153,27 @@ namespace RegArchLib {
 	double mySigmat = sqrt(theValue.mHt[theDate]) ;
 		theValue.mEpst[theDate] = theValue.mUt[theDate]/mySigmat ;
 		theParam.mVar->ComputeGrad(theDate, theValue, theGradData, theParam.mResids) ;
+		theGradData.mCurrentGradSigma = theGradData.mCurrentGradVar / (2.0 * mySigmat);
 		if (theParam.mMean != NULL)
 			theParam.mMean->ComputeGrad(theDate, theValue, theGradData, theParam.mResids) ;
 		theParam.mResids->ComputeGrad(theDate, theValue, theGradData) ;
-		theGradData.mCurrentGradSigma = theGradData.mCurrentGradVar / (2.0 * mySigmat) ;
 		theGradData.mCurrentGradEps = -1.0*(theValue.mEpst[theDate] * theGradData.mCurrentGradSigma + theGradData.mCurrentGradMu)/ mySigmat ;
-		theGradlt =  (-1.0/mySigmat) * theGradData.mCurrentGradSigma  + theGradData.mCurrentGradDens[0] * theGradData.mCurrentGradEps ;
-	uint myNLawParam = theGradData.GetNDistrParameter() ;
-	uint myIndex = theGradData.GetNMeanParam() + theGradData.GetNVarParam() ;	
-		for (register uint i =  1 ; i <= myNLawParam ; i++)
-			theGradlt[i+myIndex-1] += theGradData.mCurrentGradDens[i] ;
-			// Update
-		theGradData.Update() ;
+		theGradlt = (-1.0 / mySigmat) * theGradData.mCurrentGradSigma + theGradData.mCurrentDiffLogDensity * theGradData.mCurrentGradEps + theGradData.mCurrentGradDens ;
 		theLt = -0.5*log(theValue.mHt[theDate]) + theParam.mResids->LogDensity(theValue.mEpst[theDate]) ; 
 	}
 
 	void RegArchGradLLH(cRegArchModel& theParam, cRegArchValue& theData, cDVector& theGradLLH)
 	{
-
 	cRegArchGradient myGradData=cRegArchGradient(&theParam) ;
 	cDVector myGradlt(myGradData.GetNParam()) ;
 		theGradLLH = 0.0L ;
+		theParam.mVar->UpdateProxyVarParameters();
+		if (theParam.mMean != NULL)
+			theParam.mMean->UpdateProxyMeanParameters();
 		for (register int t = 0 ; t < (int)theData.mYt.GetSize() ; t++)
 		{	RegArchGradLt(t, theParam, theData, myGradData, myGradlt) ;
 			theGradLLH += myGradlt ;
+			myGradData.Update();
 		}
 	}
 
@@ -155,36 +184,321 @@ namespace RegArchLib {
 	double myLt ;
 		theGradLLH = 0.0L ;
 		theLLH = 0.0 ;
+		theParam.mVar->UpdateProxyVarParameters();
+		if (theParam.mMean != NULL)
+			theParam.mMean->UpdateProxyMeanParameters();
 		for (register int t = 0 ; t < (int)theValue.mYt.GetSize() ; t++)
 		{	RegArchLtAndGradLt(t, theParam, theValue, myGradData, myLt, myGradlt) ;
 			theGradLLH += myGradlt ;
 			theLLH += myLt ;
+			myGradData.Update();
 		}
+	}
+
+	void RegArchHessLt(int theDate, cRegArchModel& theParam, cRegArchValue& theValue, cRegArchGradient& theGradData, cRegArchHessien& theHessData, cDMatrix& theHesslt)
+	{	
+		theHesslt = 0.0;
+		theValue.mHt[theDate] = theParam.mVar->ComputeVar(theDate, theValue); // mHt
+		if (theParam.mMean != NULL)
+			theValue.mMt[theDate] = theParam.mMean->ComputeMean(theDate, theValue); // mMt
+		theValue.mUt[theDate] = theValue.mYt[theDate] - theValue.mMt[theDate]; // mUt
+		double mySigmat = sqrt(theValue.mHt[theDate]); // mySigma
+		theValue.mEpst[theDate] = theValue.mUt[theDate] / mySigmat; // mEpst
+		theParam.mVar->ComputeGrad(theDate, theValue, theGradData, theParam.mResids); // mCurrentGradVar
+		theGradData.mCurrentGradSigma = theGradData.mCurrentGradVar / (2.0 * mySigmat); // mCurrentGradSigma
+		if (theParam.mMean != NULL)
+			theParam.mMean->ComputeGrad(theDate, theValue, theGradData, theParam.mResids); // mCurrentGradMu
+		theParam.mResids->ComputeGrad(theDate, theValue, theGradData); // mCurrentDiffLogDensity
+		theGradData.mCurrentGradEps = -1.0*(theValue.mEpst[theDate] * theGradData.mCurrentGradSigma + theGradData.mCurrentGradMu) / mySigmat; // mCurrentGradEps
+		
+
+		//theHesslt = (-1.0 / mySigmat2) * theGradData.mCurrentGradSigma * Transpose(theGradData.mCurrentGradSigma)
+
+		/*
+		theGradlt = 0.0;
+		theValue.mHt[theDate] = theParam.mVar->ComputeVar(theDate, theValue);
+		if (theParam.mMean != NULL)
+			theValue.mMt[theDate] = theParam.mMean->ComputeMean(theDate, theValue);
+		theValue.mUt[theDate] = theValue.mYt[theDate] - theValue.mMt[theDate];
+		double mySigmat = sqrt(theValue.mHt[theDate]);
+		theValue.mEpst[theDate] = theValue.mUt[theDate] / mySigmat;
+		theParam.mVar->ComputeGrad(theDate, theValue, theGradData, theParam.mResids);
+		theGradData.mCurrentGradSigma = theGradData.mCurrentGradVar / (2.0 * mySigmat);
+		if (theParam.mMean != NULL)
+			theParam.mMean->ComputeGrad(theDate, theValue, theGradData, theParam.mResids);
+		theParam.mResids->ComputeGrad(theDate, theValue, theGradData);
+		theGradData.mCurrentGradEps = -1.0*(theValue.mEpst[theDate] * theGradData.mCurrentGradSigma + theGradData.mCurrentGradMu) / mySigmat;
+		theGradlt = (-1.0 / mySigmat) * theGradData.mCurrentGradSigma + theGradData.mCurrentDiffLogDensity * theGradData.mCurrentGradEps + theGradData.mCurrentGradDens;
+		theLt = -0.5*log(theValue.mHt[theDate]) + theParam.mResids->LogDensity(theValue.mEpst[theDate]);
+		*/
+	}
+
+	void NumericRegArchHessLt(int theDate, cRegArchModel& theParam, cRegArchValue* theValue, cRegArchGradient* theGradData, cDMatrix& theHesslt, double theh)
+	{
+
+	}
+
+	void RegArchGradAndHessLt(int theDate, cRegArchModel& theParam, cRegArchValue& theValue, cRegArchGradient& theGradData, cRegArchHessien& theHessData, cDVector& theGradlt, cDMatrix& theHesslt)
+	{	
+
+	}
+
+	void RegArchLtGradAndHessLt(int theDate, cRegArchModel& theParam, cRegArchValue& theValue, double& thelt, cRegArchGradient& theGradData, cRegArchHessien& theHessData, cDVector& theGradlt, cDMatrix& theHesslt)
+	{
+
+	}
+
+	void RegArchHessLLH(cRegArchModel& theParam, cRegArchValue& theValue, cDMatrix& theHessLLH)
+	{
+
+		cRegArchGradient myGradData = cRegArchGradient(&theParam);
+		cRegArchHessien myHessData = cRegArchHessien(&theParam);
+		cDMatrix myHesslt(myHessData.GetNParam(),myHessData.GetNParam());
+		theHessLLH = 0.0L;
+		theParam.mVar->UpdateProxyVarParameters();
+		if (theParam.mMean != NULL)
+			theParam.mMean->UpdateProxyMeanParameters();
+		for (register int t = 0; t < (int)theValue.mYt.GetSize(); t++)
+		{
+			RegArchHessLt(t, theParam, theValue, myGradData, myHessData, myHesslt);
+			theHessLLH += myHesslt;
+			myGradData.Update();
+			myHessData.Update();
+		}
+
+		/*cRegArchGradient myGradData = cRegArchGradient(&theParam);
+		cDVector myGradlt(myGradData.GetNParam());
+		theGradLLH = 0.0L;
+		theParam.mVar->UpdateProxyVarParameters();
+		if (theParam.mMean != NULL)
+			theParam.mMean->UpdateProxyMeanParameters();
+		for (register int t = 0; t < (int)theData.mYt.GetSize(); t++)
+		{
+			RegArchGradLt(t, theParam, theData, myGradData, myGradlt);
+			theGradLLH += myGradlt;
+			myGradData.Update();
+		}*/
+
+	}
+
+	void NumericComputeJ(cRegArchModel& theModel, cRegArchValue& theValue, cDMatrix& theHessLLH, double theh=1e-5)
+	{
+
+	}
+
+	void NumericComputeCov(cRegArchModel &theModel, cRegArchValue &theData, cDMatrix &theCov)
+	{
+
+	}
+
+	void RegArchComputeI(cRegArchModel &theModel,cRegArchValue &theData, cDMatrix &theI)
+	{
+
+	}
+
+	void RegArchComputeIAndJ(cRegArchModel &theModel,cRegArchValue &theData, cDMatrix &theI, cDMatrix &theJ)
+	{
+
+	}
+
+	void RegArchComputeCov(cRegArchModel& theModel, cRegArchValue& theValue, cDMatrix& theCov)
+	{
+
 	}
 
 	void NumericRegArchGradLLH(cRegArchModel& theModel, cRegArchValue& theValue, cDVector& theGradLLH, double theh)
 	{
-	double myLLH0 = RegArchLLH(theModel, theValue) ;
-	int myNParam = (int)theGradLLH.GetSize() ;
+}
 
-	cDVector myVectParam(myNParam), myVect0(myNParam) ;
-	
-		theModel.RegArchParamToVector(myVectParam) ;
-		myVect0 = myVectParam ;
-		for (register int i = 0 ; i < myNParam ; i++)
+	void NumericRegArchHessLLHold(cRegArchModel& theModel, cRegArchValue& theValue, cDMatrix& theHessLLH, double theh)
+	{
+
+	}		
+
+#ifndef _RDLL_
+	void RegArchEstim(cRegArchModel& theModel, cRegArchValue& theValue, sGSLMultiMinResult& theResStruct, cRegArchModel& theResModel, cDVector* theInitPoint, eGSLMultiMinAlgoEnum theAlgo, double theStopValue, int theMaxIter, bool theVerbose) 
+	{
+	uint myNParam = theModel.GetNParam() ;
+
+		if (theModel.mMean != NULL)
+			theResModel.SetMean(*(theModel.mMean)) ;
+		else
+			theResModel.mMean = NULL ;
+
+		theResModel.SetVar(*(theModel.mVar)) ;
+		theResModel.SetResid(*(theModel.mResids)) ;
+
+		if (theInitPoint == NULL)
 		{
-		double myhh = fabs(theh * myVectParam[i]) ;
-			if (myhh < 1e-16)
-				myhh = theh ;
-			myVectParam[i] += myhh ;
-			theModel.VectorToRegArchParam(myVectParam) ;
+			theResModel.SetDefaultInitPoint(theValue);					
+		}
+		else
+		{	if (theInitPoint->GetGSLVector() == NULL)
+				theResModel.SetDefaultInitPoint(theValue) ;
+			else
+				theResModel.VectorToRegArchParam(*theInitPoint) ;
+		}
+	cDVector myX0(myNParam) ;
+		theResModel.RegArchParamToVector(myX0) ;
+	cGSLMultiMin myMultiMin(myX0, theAlgo) ;
+
+	sParamOptimStruct myOtherParam ;
+		myOtherParam.mParam = &theResModel ;
+		myOtherParam.mValue = &theValue ;
+
+	gsl_multimin_function_fdf myFunct ;
+		myFunct.df = GslGradLLHFunction ;
+		myFunct.f = GslLLHFunction ;
+		myFunct.fdf = GslLLHAndGradLLHFunction ;
+		myFunct.n = myNParam ;
+		myFunct.params = &myOtherParam ;
+
+		myMultiMin.SetFunction(&myFunct) ;
+
+	cDVector myX1(myNParam) ;
+
+	sGSLMultiMinResult myGSLRes ;
+ 		myMultiMin.GSLOptim(myX1, theResStruct, theStopValue, theMaxIter, theVerbose) ;
+
+		theResModel.VectorToRegArchParam(myX1) ;
+		
+	}
+#endif //_RDLL
+
+#ifndef _RDLL_
+	void RegArchEstim(cRegArchModel& theModel, cRegArchValue& theValue,  sGSLMultiMinResult& theResStruct, cRegArchModel& theResModel, cDVector* theInitPoint, sGSLMultiMinAlgoParam* theAlgoParam) 
+	{
+	uint myNParam = theModel.GetNParam() ;
+
+		if (theModel.mMean != NULL)
+			theResModel.SetMean(*(theModel.mMean)) ;
+		else
+			theResModel.mMean = NULL ;
+
+		theResModel.SetVar(*(theModel.mVar)) ;
+		theResModel.SetResid(*(theModel.mResids)) ;
+
+		if (theInitPoint == NULL)
+		{
+			theResModel.SetDefaultInitPoint(theValue);					
+		}
+		else
+		{	if (theInitPoint->GetGSLVector() == NULL)
+				theResModel.SetDefaultInitPoint(theValue) ;
+			else
+				theResModel.VectorToRegArchParam(*theInitPoint) ;
+		}
+	cDVector myX0(myNParam) ;
+		theResModel.RegArchParamToVector(myX0) ;
+	
+	sGSLMultiMinAlgoParam* myAlgoParam ;
+	bool	myExist = (theAlgoParam != NULL) ;	
+		if (!myExist)
+		{
+			myAlgoParam = (sGSLMultiMinAlgoParam *)malloc(sizeof(sGSLMultiMinAlgoParam)) ;
+			myAlgoParam->mAlgoType = eBFGSTwo ;
+			myAlgoParam->mNMaxIter = 200 ;
+			myAlgoParam->mStepSize = 0.01 ;
+			myAlgoParam->mTol = 0.01 ;
+			myAlgoParam->mVerbose = false ;
+		}
+		else
+		{
+			myAlgoParam = theAlgoParam ;
+		}
+			
+	cGSLMultiMin myMultiMin(myX0, myAlgoParam->mAlgoType) ;
+
+	sParamOptimStruct myOtherParam ;
+		myOtherParam.mParam = &theResModel ;
+		myOtherParam.mValue = &theValue ;
+
+	gsl_multimin_function_fdf myFunct ;
+		myFunct.df = GslGradLLHFunction ;
+		myFunct.f = GslLLHFunction ;
+		myFunct.fdf = GslLLHAndGradLLHFunction ;
+		myFunct.n = myNParam ;
+		myFunct.params = &myOtherParam ;
+
+		myMultiMin.SetFunction(&myFunct) ;
+
+	cDVector myX1(myNParam) ;
 
 		
-		double myLLH1 = RegArchLLH(theModel, theValue) ;
-			theGradLLH[i] = (myLLH1 - myLLH0)/myhh ;
-			myVectParam[i] -= myhh ;
-		}
-		theModel.VectorToRegArchParam(myVect0) ;
+ 		myMultiMin.GSLOptim(myX1, theResStruct, *myAlgoParam) ;
+
+		if (!myExist)
+			free(myAlgoParam) ;
+
+		theResModel.VectorToRegArchParam(myX1) ;
+		
 	}
 
-} //namespace
+	void RegArchEstim(cRegArchModel& theModel, cRegArchValue& theValue, cNLOPTResult& theResStruct, cRegArchModel& theResModel, cDVector* theInitPoint, cNLOPTAlgoParam* theAlgoParam)
+	{
+	uint myNParam = theModel.GetNParam();
+
+		if (theModel.mMean != NULL)
+			theResModel.SetMean(*(theModel.mMean));
+		else
+			theResModel.mMean = NULL;
+
+		theResModel.SetVar(*(theModel.mVar));
+		theResModel.SetResid(*(theModel.mResids));
+
+		if (theInitPoint == NULL)
+		{
+			theResModel.SetDefaultInitPoint(theValue);
+		}
+		else
+		{
+			if (theInitPoint->GetGSLVector() == NULL)
+				theResModel.SetDefaultInitPoint(theValue);
+			else
+				theResModel.VectorToRegArchParam(*theInitPoint);
+		}
+	cDVector myX0(myNParam);
+		theResModel.RegArchParamToVector(myX0);
+
+	cNLOPTAlgoParam* myAlgoParam = new cNLOPTAlgoParam();
+	bool myExist = (theAlgoParam != NULL);
+		if (!myExist)
+		{
+			myAlgoParam = new cNLOPTAlgoParam();
+		}
+		else
+		{
+			myAlgoParam->mAlgo = theAlgoParam->mAlgo;
+			myAlgoParam->mfTol = theAlgoParam->mfTol;
+			myAlgoParam->mMaxComputeTime = theAlgoParam->mMaxComputeTime;
+			myAlgoParam->mMaxFuncEval = theAlgoParam->mMaxFuncEval;
+			myAlgoParam->mMinimisation = theAlgoParam->mMinimisation;
+			myAlgoParam->mStopVal = theAlgoParam->mStopVal;
+			myAlgoParam->mxTol = theAlgoParam->mxTol;
+			//myAlgoParam->mVerbose = theAlgoParam->mVerbose;
+		}
+
+	cNloptWrapperCpp myOptim = cNloptWrapperCpp();
+
+	sParamOptimStruct myOtherParam;
+		myOtherParam.mParam = &theResModel;
+		myOtherParam.mValue = &theValue;
+		//myOtherParam.mVerbose = myAlgoParam->mVerbose;
+		myOtherParam.mNFuncEval = 0;
+
+		myOptim.SetAlgorithm(myAlgoParam->mAlgo, myNParam);
+		myOptim.SetObjectiveFunc((nlopt_func)NloptLLHAndGradLLHFunction, false, &myOtherParam);
+
+	double* myX1 = GSLVectorToDoubleStar(myX0);
+
+
+		myOptim.Optimize(myX1, myNParam, *myAlgoParam, theResStruct);
+
+		if (!myExist)
+			free(myAlgoParam);
+	cDVector myXOptim(myNParam, theResStruct.mXOptim);
+		theResModel.VectorToRegArchParam(myXOptim);
+	}
+
+#endif // _RDLL_
+}

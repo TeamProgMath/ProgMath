@@ -40,7 +40,7 @@ namespace RegArchLib {
 	}
 
 	/*!
-	 * \fn cAbstResiduals* cStudentResiduals::::PtrCopy()
+	 * \fn cAbstCondVar* cNormResiduals::::PtrCopy()
 	 */
 
 	cAbstResiduals* cStudentResiduals::PtrCopy() const
@@ -61,28 +61,40 @@ namespace RegArchLib {
 	}
 
 	/*!
-	 * \fn void cStudentResiduals::Generate(uint theNSample, cDVector& theEpst) const
-	 * \param uint theNSample: the sample size
-	 * \param cDVector& theEpst: the output vector
+	 * \fn void cStudentResiduals::Generate(const uint theNSample, cDVector& theYt) const
+	 * \param const uint theNSample: the sample size
+	 * \param cDVector& theYt: the output vector
 	 */
-	void cStudentResiduals::Generate(uint theNSample, cDVector& theEpst) const
+	void cStudentResiduals::Generate(const uint theNSample, cDVector& theYt) const
 	{
-		theEpst.ReAlloc(theNSample) ;
+		theYt.ReAlloc(theNSample) ;
 		if (mDistrParameter[0] <= 2.0)
 			throw cError("wrong d.o.f.") ;
 
 	double myStd = sqrt(mDistrParameter[0]/(mDistrParameter[0]-2.0)) ;
 		for (register uint t = 0 ; t < theNSample ; t++)
-			theEpst[t] = gsl_ran_tdist(mtR, mDistrParameter[0])/myStd ;
+			theYt[t] = gsl_ran_tdist(mtR, mDistrParameter[0])/myStd ;
 	}
 
 	/*!
 	 * \fn void cStudentResiduals::Print(ostream& theOut) const
 	 * \param ostream& theOut: the output stream, default cout.
 	 */
+#ifndef _RDLL_
 	void cStudentResiduals::Print(ostream& theOut) const
 	{
 		theOut << "Conditional Student Distribution with " << mDistrParameter[0] << " d. o. f." << endl ;
+	}
+#else
+	void cStudentResiduals::Print(void)
+	{
+		Rprintf("Conditional Student Distribution with %f d.o.f.\n", mDistrParameter[0]);
+	}
+#endif // _RDLL_
+
+	void cStudentResiduals::SetDefaultInitPoint(void) 
+	{
+		mDistrParameter[0] = 10.0 ;
 	}
 
 	static double StudentLogDensity(double theX, double theDof)
@@ -96,7 +108,6 @@ namespace RegArchLib {
 		return StudentLogDensity(theX*myStd, mDistrParameter[0]) + log(myStd) ;
 
 	}
-
 
 	/*!
 	 * \fn double cStudentResiduals::GetNParam(void) const
@@ -126,25 +137,29 @@ namespace RegArchLib {
 		theGrad[1] = -0.5*(myAux2 + (1 - myt2)/myAux1) ;
 	}
 
+	double cStudentResiduals::DiffLogDensity(double theX) const
+	{
+		double myDof = this->mDistrParameter[0];
+		return -(myDof + 1)*theX / (theX*theX + myDof - 2.0);
+	}
+
 	/*!
 	 * \fn static void GradLogDensity(double theX, cDVector& theGrad, cDVector& theDistrParam)
-	 * \brief Compute the derivative of standardized Student log density with respect to the random variable (theGrad[0]) \e and the gradient
+	 * \brief Compute the derivative of log density with respect to the random variable (theGrad[0]) \e and the gradient
 	 * of log density with respect to the model parameters (other components in theGrad)
 	 * \param theX double: value of the random variable
 	 * \param theGrad cDVector&: concatenation of derivatives with respect to the random variable and the model parameters
 	 * \param theDistrParam cDVector&: value of the distribution parameters
 	 */
-	static void GradLogDensity(double theX, cDVector& theGrad, const cDVector& theDistrParam)
+	static void GradLogDensity(double theX, cDVector& theGrad, const cDVector& theDistrParam, uint theBegIndex)
 	{
-	double	myDof = theDistrParam[0],
-			myStd = sqrt(myDof/(myDof-2.0)) ;
-		StudentGradLogDensity(theX*myStd, myDof, theGrad) ;
-
-	double	myAux1 = myDof - 2.0,
-			myAux2 = myAux1 * myDof ;
-		theGrad[1] -=  (theX * theGrad[0]/(myAux1*sqrt(myAux2)) + 1.0/myAux2) ;
-		theGrad[0] *=  myStd ;
-
+	double	myDof = theDistrParam[0];
+	double myt2 = theX*theX;
+	double myAux1 = myt2 + myDof - 2;
+	double myRes = -log((myt2 + myDof - 2) / (myDof - 2)) / 2;
+		myRes += (gsl_sf_psi((myDof + 1) / 2.0E+0) - gsl_sf_psi(myDof / 2)) / 2;
+		myRes += (myDof*myt2 - myDof + 2) / ((myDof - 2)*(myt2 + myDof - 2)) / 2;
+		theGrad[theBegIndex] = myRes;
 	}
 
 	/*!
@@ -157,7 +172,9 @@ namespace RegArchLib {
 	 */
 	void cStudentResiduals::ComputeGrad(uint theDate, const cRegArchValue& theValue, cRegArchGradient& theGradData) const
 	{
-		GradLogDensity(theValue.mEpst[theDate], theGradData.mCurrentGradDens, mDistrParameter) ;
+	uint myBegIndex = theGradData.GetNMeanParam() + theGradData.GetNVarParam();
+		GradLogDensity(theValue.mEpst[theDate], theGradData.mCurrentGradDens, mDistrParameter, myBegIndex) ;
+		theGradData.mCurrentDiffLogDensity = DiffLogDensity(theValue.mEpst[theDate]);
 	}
 
 	void cStudentResiduals::RegArchParamToVector(cDVector& theDestVect, uint theIndex) const
@@ -177,5 +194,54 @@ namespace RegArchLib {
 	/*
 	 * (2*sqrt(n-2)*gamma((n+1)/2))/(sqrt(PI)*(n-1)*gamma(n/2))
 	 */
+	double cStudentResiduals::ComputeEspAbsEps(void)
+	{
+	double myDof = mDistrParameter[0] ;
+		return gsl_sf_gamma((myDof+1.0)/2.0)/gsl_sf_gamma(myDof/2.0)
+			*2.0*sqrt(myDof-2.0)/(myDof-1.0)/SQRT_PI ;
+	}
+
+	/*
+	 *  [(n^2 - 3*n + 2)*(psi0((n+1)/2) - psi0(n/2)) - n + 3]/[sqrt(PI)*sqrt(n-2)*(n-1)^2]*gamma((n+1)/2)/gamma(n/2)
+	 */
+	void cStudentResiduals::ComputeGradBetaEspAbsEps(cDVector& theGrad)
+	{
+	double myDof = this->mDistrParameter[0],
+			myAux = myDof*myDof-3*myDof+2 ;
+	
+		theGrad[0] = (myAux*gsl_sf_psi((myDof+1)/2.0)-myAux*gsl_sf_psi(myDof/2.0)- myDof + 3.0)
+			*gsl_sf_gamma((myDof+1)/2.0)
+			/(SQRT_PI*sqrt(myDof-2)*(myDof*myDof-2*myDof+1)*gsl_sf_gamma(myDof/2.0)) ;
+	}
+
+	double cStudentResiduals::Diff2LogDensity(double theX) const
+	{
+		double myDof = mDistrParameter[0];
+		double myt2 = theX*theX;
+		return (myDof + 1)*(myt2 - myDof + 2) / pow(myt2 + myDof - 2, 2);
+	}
+
+	void cStudentResiduals::GradDiffLogDensity(double theX, const cDVector& theDistrParam, cDVector& theGrad)
+	{
+	double myDof = theDistrParam[0];
+	double myt2 = theX*theX;
+		theGrad[0] = -(theX*(myt2- 3)) / pow(myt2 + myDof - 2, 2);
+	}
+
+	static void HessLogDensity(double theX, cDMatrix& theHess, const cDVector& theDistrParam, uint theBegIndex)
+	{
+	double myDof = theDistrParam[0];
+	double myt2 = theX*theX;
+	double myAux1 = myt2 + myDof - 2;
+	double myRes = ((myDof - 4)*myt2*myt2 - (myDof - 2)*(4*myt2-myDof+2))/(2*pow((myDof-2)*myAux1, 2));
+		myRes += (gsl_sf_psi_1((myDof+1)/2)-gsl_sf_psi_1(myDof/2)) / 4;
+		theHess[theBegIndex][theBegIndex] = myRes;
+	}
+
+
+	void cStudentResiduals::ComputeHess(uint theDate, const cRegArchValue& theData, cRegArchGradient& theGradData, cRegArchHessien& theHessData, cAbstResiduals* theResiduals)
+	{
+
+	}
 
 }//namespace

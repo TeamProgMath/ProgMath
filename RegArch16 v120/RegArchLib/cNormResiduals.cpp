@@ -28,7 +28,7 @@ namespace RegArchLib {
 	}
 
 	/*!
-	 * \fn cAbstResiduals* cNormResiduals::::PtrCopy()
+	 * \fn cAbstCondVar* cNormResiduals::::PtrCopy()
 	 */
 
 	cAbstResiduals* cNormResiduals::PtrCopy() const
@@ -48,26 +48,40 @@ namespace RegArchLib {
 	 * \fn void cNormResiduals::Print(ostream& theOut) const
 	 * \param ostream& theOut: the output stream, default cout.
 	 */
+#ifndef _RDLL_
 	void cNormResiduals::Print(ostream& theOut) const
 	{
 		theOut << "Conditional standardized normal distribution" << endl ;
 
 	}
+#else
+	void cNormResiduals::Print(void)
+	{
+		Rprintf("Conditional standardized normal distribution\n");
+
+	}
+#endif // _RDLL_
+
+
 	/*!
-	 * \fn void cNormResiduals::Generate(uint theNSample, cDVector& theEpst) const 
+	 * \fn void cNormResiduals::Generate(const uint theNSample, cDVector& theYt) const 
 	 * \brief Draw a sample of N(0, 1) residuals.
-	 * \param uint theNSample: the sample size.
-	 * \param cDVector& theEpst: output parameter
+	 * \param const uint theNSample: the sample size.
+	 * \param cDVector& theYt: output parameter
 	 * \details: theYt is reallocated to size theNSample here.
 	 */
-	
-	void cNormResiduals::Generate(uint theNSample, cDVector& theEpst) const 
+
+	void cNormResiduals::SetDefaultInitPoint(void) 
 	{
-		theEpst.ReAlloc(theNSample) ;
+	}
+	
+	void cNormResiduals::Generate(const uint theNSample, cDVector& theYt) const 
+	{
+		theYt.ReAlloc(theNSample) ;
 
 
 		for (register uint t = 0 ; t < theNSample ; t++)
-			theEpst[t] = gsl_ran_ugaussian(mtR) ;
+			theYt[t] = gsl_ran_ugaussian(mtR) ;
 	}
 
 	/*!
@@ -103,6 +117,16 @@ namespace RegArchLib {
 	}
 
 	/*!
+	* \fn cNormResiduals::DiffLogDensity(double theX) const
+	* \brief Compute the derivative of log density of a Gaussian distribution with respect to the random variable 
+	* \param theX double: value of the random variable
+	*/
+	double cNormResiduals::DiffLogDensity(double theX) const
+	{
+		return -theX;
+	}
+
+	/*!
 	 * \fn void cNormResiduals::ComputeGrad(uint theDate, const cRegArchValue& theValue, cRegArchGradient& theGradData)
 	 * \brief Compute the derivative of log density with respect to the random variable (theGradData[0]) \e and the gradient
 	 * of log density with respect to the model parameters (other components in theGradData)
@@ -112,7 +136,7 @@ namespace RegArchLib {
 	 */
 	void cNormResiduals::ComputeGrad(uint theDate, const cRegArchValue& theValue, cRegArchGradient& theGradData) const
 	{
-		GradLogDensity(theValue.mEpst[theDate], theGradData.mCurrentGradDens) ;
+		theGradData.mCurrentDiffLogDensity = DiffLogDensity(theValue.mEpst[theDate]);
 	}
 
 	void cNormResiduals::RegArchParamToVector(cDVector& theDestVect, uint theIndex) const
@@ -122,5 +146,30 @@ namespace RegArchLib {
 	void cNormResiduals::VectorToRegArchParam(const cDVector& theSrcVect, uint theIndex)
 	{
 	}
+
+	double cNormResiduals::ComputeEspAbsEps(void)
+	{
+		return 2.0/SQRT_2_PI ;
+	}
+
+	void cNormResiduals::ComputeGradBetaEspAbsEps(cDVector& theGrad)
+	{
+	}
+
+	double cNormResiduals::Diff2LogDensity(double theX) const
+	{
+		return -1.0;
+	}
+
+	void cNormResiduals::GradDiffLogDensity(double theX, const cDVector& theDistrParam, cDVector& theGrad)
+	{
+
+	}
+
+	void cNormResiduals::ComputeHess(uint theDate, const cRegArchValue& theData, cRegArchGradient& theGradData, cRegArchHessien& theHessData, cAbstResiduals* theResiduals)
+	{
+
+	}
+
 
 }//namespace

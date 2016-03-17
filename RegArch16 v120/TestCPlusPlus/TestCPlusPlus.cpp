@@ -13,61 +13,45 @@ using namespace RegArchLib ;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	//cout.precision(12) ; 
-	/*
-cFigarch myFigarch(1, 1, 0.5, 100);
-	myFigarch.Set(.1, 0, 0);
-	myFigarch.Set(.1, 0, 1);
-	myFigarch.Set(.8, 0, 2);*/
+	cout.precision(12) ; 
 
-//cAr	myAr(2) ;
+	// mean cond
+	cAr	myAr(2) ;
+	myAr.Set(.8, 0) ;
+	myAr.Set(-.2, 1) ;
+	cMa myMa(2) ;
+	myMa.Set(0.8, 0) ;
+	myMa.Set(0.6, 1) ;
+	cConst myConstMean(10.0);
+	cCondMean myCondMean ;
+	myCondMean.AddOneMean(myAr) ;
+	myCondMean.AddOneMean(myMa) ;
+	myCondMean.AddOneMean(myConstMean);
+	myCondMean.Print();
+	std::cin.get();
 
-	//myAr.Set(.8, 0) ;
-	//myAr.Set(-.2, 1) ;
-//	myAr.Print() ;
-
-
-//cMa myMa(1) ;
-	//myMa.Set(0.8, 0) ;
-//	myMa.Set(0.6, 1) ;
-
-//cCondMean myCondMean ;
-	//myCondMean.SetOneMean(0, myAr) ;
-
-	//myCondMean.SetOneMean(1, myMa) ;
-
-/*	cCondMean myCondMean1 = cCondMean(myCondMean) ;
-	cout << "CondMean :" << myCondMean << endl ;
-	cout << "CondMean1 : " <<  myCondMean1 << endl ;
-	myCondMean1.Delete() ;
-//	cout << "CondMean :" << myCondMean << endl ;
-//	cout << "CondMean1 : " <<  myCondMean1 << endl ;
-	myCondMean1 = myCondMean ;
-//	cout << "CondMean1 : " <<  myCondMean1 << endl ;
-*/
-
-/*cGarch myGarch(1,1) ;
-	myGarch.Set(0.1, 0, 0) ;
-	myGarch.Set(0.1, 0, 1) ;
-	myGarch.Set(0.8, 0, 2) ¨;*/
-
-
-//cConstCondVar myConstVar(1.0) ;
-
-/*cStudentResiduals myStudent(5, true) ;
-cNormResiduals myNormResid ;
-
-cConstCondVar myConstVar(1.0) ;
-cConst myConstMean(10.0);
-cArch myArch(1);
+	// residuals
+	cNormResiduals myNormResid;
+	myNormResid.Print();
+	std::cin.get();
+	
+	// var cond
+	cConstCondVar myConstVar(1.0) ;
+	cArch myArch(1);
 	myArch.Set(0.4, 0, 0);
 	myArch.Set(0.5, 0, 1);
+
+	// ??
+	cStdDevInMean myStdDevInMean(.6);
+	cVarInMean myVarInMean(.6);
 	
-cStdDevInMean myStdDevInMean(.6);
-cVarInMean myVarInMean(.6);
-cRegArchModel myModel ;
-//myModel.SetMean(myCondMean) ;
-//	myModel.AddOneMean(myConstMean);
+	// set model
+	cRegArchModel myModel;
+	myModel.SetMean(myCondMean);
+	myModel.SetResid(myNormResid);
+	myModel.SetVar(myConstVar);
+	myModel.AddOneMean(myConstMean);
+
 //	myModel.AddOneMean(myAr);
 
 //	myModel.PrintMean();
@@ -76,7 +60,7 @@ cRegArchModel myModel ;
 	
 //	myModel.AddOneMean(myMa);
 //	myModel.SetResid(myStudent) ;
-	myModel.SetResid(myNormResid);
+//	myModel.SetResid(myNormResid);
 //	myModel.SetVar(myGarch);
 //	myModel.SetVar(myConstVar);	
 	
@@ -128,13 +112,12 @@ cConst myConst(100.0) ;
 */
 //cVarInMean myVarInMean(0.4) ;
 
+	std::cin.get();
 
-/*
-uint myNSimul = 10000;
-cRegArchValue myValue(myNSimul) ;
-	RegArchSimul(myNSimul, myModel, myValue) ;
-	*/
-
+	uint myNSimul = 10000;
+	cRegArchValue myValue(myNSimul);
+	RegArchSimul(myNSimul, myModel, myValue);
+	
 
 /*
 ofstream myFile;
@@ -169,6 +152,7 @@ ARCH(Phi1)           0.100000
 GARCH(Beta1)         0.400000
 
 */
+
 	//myInitPoint[0] = 10;
 	/*myInitPoint[0] = 0.04;
 	myInitPoint[1] = 0.1;
@@ -179,8 +163,9 @@ GARCH(Beta1)         0.400000
 	cout << endl << myResStruct.mConvergenceString << endl;
 	myResModel.Print();
 	cout << endl << "LLH = " << myResStruct.mFunctValue << endl << "Temps : " << myResStruct.mComputeTime << " s" << endl;
+	*/
 
-/*
+
 cRegArchGradient myGradient = cRegArchGradient(&myModel);
 cRegArchHessien myHessien = cRegArchHessien(&myModel);
 uint myNParam = myModel.GetNParam();
@@ -221,12 +206,12 @@ for (register uint t = 0; t < myNSimul; t++)
 
 		
 		cout << "t=" << t << endl;
-//		cout << myDiffGrad << endl;
+		cout << myDiffGrad << endl;
 		cout << myDiff << endl;
-//		cout << myGradient.mCurrentGradMu << endl;
-//		cout << myHessien.mCurrentHessVar << endl;
-//		cout << myHessLt << endl;
-//		cout << myHessien.mCurrentHessDens << endl;
+		cout << myGradient.mCurrentGradMu << endl;
+		cout << myHessien.mCurrentHessVar << endl;
+		cout << myHessLt << endl;
+		cout << myHessien.mCurrentHessDens << endl;
 		
 		myGradient.Update();
 		myHessien.Update();
@@ -234,7 +219,7 @@ for (register uint t = 0; t < myNSimul; t++)
 		cout << "Maxi = " << Maxi(Abs(myDiff)) << "\n" << endl;
 	}
 
-*/
+	getchar();
 	exit(0);
 
 /*
@@ -261,12 +246,12 @@ myValue.ComputeMeanAndVar(myMeanSerie, myVarSerie) ;
 myResModel.mMean->SetDefaultInitPoint(myMeanSerie, myVarSerie) ;
 myResModel.mVar->SetDefaultInitPoint(myMeanSerie, myVarSerie);
 myResModel.Print() ;*/
-
+	
 		ofstream fichier("../test.txt", ios::out | ios::trunc);  // ouverture en écriture avec effacement du fichier ouvert
  
         if(fichier)
         {
-                //fichier <<	myValue.mYt << endl; 
+                fichier <<	myValue.mYt << endl; 
                 fichier.close();
         }
         else

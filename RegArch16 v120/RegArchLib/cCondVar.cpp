@@ -214,11 +214,13 @@ namespace RegArchLib {
 
 	void cCondVar::ComputeGrad(uint theDate, const cRegArchValue& theValue, cRegArchGradient& theGradData, cAbstResiduals* theResids)
 	{
-		uint myIndex = 0 ;
+		//uint myIndex = 0 ;
 		theGradData.mCurrentGradVar = 0.0L ;
 		for (register uint i = 0 ; i < mvNCondVar ; i++)
-		{	mvCondVar[i]->ComputeGrad(theDate, theValue, theGradData, myIndex, theResids) ;
-			myIndex += mvCondVar[i]->GetNParam() ;
+		{	
+			//mvCondVar[i]->ComputeGrad(theDate, theValue, theGradData, myIndex, theResids) ;
+			mvCondVar[i]->ComputeGrad(theDate, theValue, theGradData, theResids);
+			//myIndex += mvCondVar[i]->GetNParam() ;
 		}
 	}
 

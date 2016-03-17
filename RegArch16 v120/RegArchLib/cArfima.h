@@ -30,9 +30,8 @@ namespace RegArchLib {
 		double mvFracD; ///< Value of the fractal d parameter
 	private:
 		uint mvNTruncLag; ///< Number of lags for AR representation
-		cMa* mvTruncMa; ///< MA approximation of ARFIMA Model
 		cPolynome mvPolMa;
-		vector<cPolynome*> mvGradPolMa;
+		vector<cPolynome> mvGradPolMa;
 
 	public:
 		cArfima(uint theNAr=0, uint theNMa=0, double theFracD=0, uint theNTruncLag = 100); ///< A simple constructor
@@ -60,10 +59,15 @@ namespace RegArchLib {
 		uint GetNParam(void) const;
 		uint GetNLags(void) const;
 		void ComputeGrad(uint theDate, const cRegArchValue& theData, cRegArchGradient& theGradData, uint theBegIndex, cAbstResiduals* theResiduals);
+		void NumericComputeGrad(uint theDate, const cRegArchValue& theData, cRegArchGradient& theGradData, uint theBegIndex, cAbstResiduals* theResiduals, double theh=1e-4);
 		void ComputeHess(uint theDate, const cRegArchValue& theData, cRegArchGradient& theGradData, cRegArchHessien& theHessData, uint theBegIndex, cAbstResiduals* theResiduals);
 		void RegArchParamToVector(cDVector& theDestVect, uint theIndex);
 		void VectorToRegArchParam(const cDVector& theSrcVect, uint theIndex = 0);
 		void ComputeHess(uint theDate, const cRegArchValue& theData, cRegArchGradient& theGradData, cRegArchHessien& theHessData, cAbstResiduals* theResiduals);
+#ifdef _DEBUG
+		void PolMaPrint(void) { mvPolMa.Print(); };
+		void PolGradPrint(void) { for (int i = 0; i < mvGradPolMa.size(); i++) mvGradPolMa.at(i).Print(); };
+#endif //_DEBUG
 	};
 
 }

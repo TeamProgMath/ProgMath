@@ -26,43 +26,44 @@ namespace RegArchLib {
 		cDVector mvGarch; ///< Vector of GARCH coefficients.
 		double mvFracD; ///< Value of the fractal d parameter
 	private :
-		uint mvNTruncLag; ///< Number of lags for ARCH representation
-		cArch*	mvTruncArch; ///< ARCH approximation of FIGARCH Model
-		cPolynome mvPhi;
-		cPolynome mvTeta;
-		cPolynome mvARMAPol;
-		cPolynome mvGradAlpha;
-		cPolynome mvGradBeta;
-		cPolynome mvGradD;
-		cArch** mvTruncArchForGrad; ///< Used to compute gradient
-		double mvh; ///< step for numerical gradient
+		uint mvNTruncLag; ///< Number of lags for AR representation
+		double mvOmega0;
+		cPolynome mvPolArch;
+		vector<cPolynome> mvGradPolArch;
 	public:
-		cFigarch(uint theNArch = 0, uint theNGarch = 0, double theFracD = 0, uint theNTruncLag=100, double theh = 1e-3); ///< A simple constructor
-		cFigarch(double theConst, const cDVector& theArch, const cDVector& theGarch, double theFracD, uint theNTruncLag=100, double theh=1e-3); ///< Another constructor
-		cFigarch(cAbstCondVar& theGarch);
+		cFigarch(uint theNArch = 0, uint theNGarch = 0, double theFracD = 0, uint theNTruncLag=100); ///< A simple constructor
+		cFigarch(double theConst, const cDVector& theArch, const cDVector& theGarch, double theFracD, uint theNTruncLag=100); ///< Another constructor
+		cFigarch(const cFigarch& teFigarch);
 		virtual ~cFigarch(); ///< A simple destructor
 		virtual cAbstCondVar* PtrCopy() const; /// < Return a copy of *this				
 		void Delete(void); /// Delete
-		void Print(ostream& theOut = cout) const; ///< Print the parameters
+#ifndef _RDLL_
+		void Print(ostream& theOut = cout) const; ///< print the parameters
+#else
+		void Print(void);
+#endif //_RDLL_
 		void SetDefaultInitPoint(double theMean, double theVar);
 		void ReAlloc(const uint theSize, const uint theNumParam = 0); ///< Allocation of the model parameters
 		void ReAlloc(const cDVector& theVectParam, const uint theNumParam = 0); ///< Allocation of the model parameters
 		void Set(const double theValue, const uint theIndex = 0, const uint theNumParam = 0); ///< Set model parameters.
 		void Set(const cDVector& theVectParam, const uint theNumParam = 0); ///< Set model parameters.
 		double Get(const uint theIndex = 0, const uint theNumParam = 0);
-		cAbstCondVar& operator=(cAbstCondVar& theSrc); ///< Standard affectation
+		cFigarch& operator =(const cFigarch& theSrc); ///< Standard affectation
 		void UpdateProxyVarParameters(void);
 		double ComputeVar(uint theDate, const cRegArchValue& theData) const;	///< Return conditional variance.
 		uint GetNParam(void) const; ///< Number of parameters in that model part
 		uint GetNArch(void) const; ///< Number of ARCH parameters
 		uint GetNGarch(void) const; ///< Number of GARCH parameters
 		uint GetNLags(void) const; ///< Number of past gradients required to compute gradient at current time t.
-		cArch* GetTruncArchForGrad(uint theIndex);
-		double Geth(void);
 		void ComputeGrad(uint theDate, const cRegArchValue& theData, cRegArchGradient& theGradData, cAbstResiduals* theResiduals);
+		void NumericComputeGrad(uint theDate, const cRegArchValue& theValue, cRegArchGradient& theGradData, uint theBegIndex, cAbstResiduals* theResiduals, double theh=1e-4);
 		void RegArchParamToVector(cDVector& theDestVect, uint theIndex = 0);
 		void VectorToRegArchParam(const cDVector& theSrcVect, uint theIndex = 0);
 		void ComputeHess(uint theDate, const cRegArchValue& theData, cRegArchGradient& theGradData, cRegArchHessien& theHessData, cAbstResiduals* theResiduals);
+#ifdef _DEBUG
+		void PolArchPrint(void) { mvPolArch.Print(); };
+		void PolGradPrint(void) { for (int i = 0; i < mvGradPolArch.size(); i++) mvGradPolArch.at(i).Print(); };
+#endif //_DEBUG
 	};
 
 }

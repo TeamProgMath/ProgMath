@@ -150,9 +150,10 @@ namespace RegArchLib {
 	{
 	uint mySize = theYt.GetSize() ;
 		ReAlloc(mySize) ;
-		if ( (mySize > 0) && (mySize == theXt.GetNRow()) )
+		if (mySize > 0) 
 		{	mYt = theYt ;
-			mXt = theXt ;
+			if (mySize == theXt.GetNRow())
+				mXt = theXt;
 		}
 	}
 

@@ -18,6 +18,7 @@ extern _DLLEXPORT_ void RegArchSimul(const uint theNSample, const cRegArchModel&
 extern _DLLEXPORT_ double RegArchLLH(const cRegArchModel& theParam, cDVector* theYt, cDMatrix* theXt=NULL) ; ///< Log-Likelihood of a general RegArch Model
 extern _DLLEXPORT_ double RegArchLLH(const cRegArchModel& theParam, cRegArchValue& theData) ; ///< Log-Likelihood of a general RegArch Model
 extern _DLLEXPORT_ void RegArchGradLt(int theDate, cRegArchModel& theParam, cRegArchValue& theData, cRegArchGradient& theGradData, cDVector& theGradlt) ;
+extern _DLLEXPORT_ void RegArchLtAndGradLt(int theDate, cRegArchModel& theParam, cRegArchValue& theValue, cRegArchGradient& theGradData, double& theLt, cDVector& theGradlt);
 extern _DLLEXPORT_ void NumericRegArchGradLt(uint theDate, cRegArchModel& theParam, cRegArchValue* theValue, cDVector& theGradlt, double theh = 1e-6);
 extern _DLLEXPORT_ void RegArchGradLLH(cRegArchModel& theParam, cRegArchValue& theData, cDVector& theGradLLH);
 extern _DLLEXPORT_ void RegArchLLHAndGradLLH(cRegArchModel& theParam, cRegArchValue& theValue, double& theLLH, cDVector& theGradLLH) ;

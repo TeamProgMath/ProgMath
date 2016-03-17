@@ -28,7 +28,6 @@ namespace RegArchLib {
 	{
 	private :
 		vector<cAbstCondMean*>	mvCondMean ; ///< Vector of the mvNCondMean conditional mean components
-		uint mvNCondMean;
 	public :
 		cCondMean(uint theNCondMean = 0) ; ///< A simple constructor
 		cCondMean(const cCondMean& theCondMean) ;
@@ -36,15 +35,19 @@ namespace RegArchLib {
 		void Delete(void) ; ///< Free memory.
 		uint GetNMean(void) const ; ///< Return the number of mean components.
 		vector<cAbstCondMean*> GetCondMean(void) const ; ///< Return mvCondMean
-		void SetOneMean(uint theWhatMean, eCondMeanEnum theCode) ; ///< Set the type of a given mean component. 
 		void SetOneMean(uint theWhatMean, cAbstCondMean& theAbstCondMean) ; ///< Set theWhatMean th component of the conditional mean model
 		void AddOneMean(cAbstCondMean& theAbstCondMean); ///< Set theWhatMean th component of the conditional mean model
 		cAbstCondMean* GetOneMean(uint theIndex) const; ///< Return a pointer to the given mean component  (no object is allocated)
+#ifndef _RDLL_
 		void Print(ostream& theOut=cout) const ; ///< Print the conditional mean model
+#else	
+		void Print(void);
+#endif // _RDLL_
 		friend ostream& operator <<(ostream& theOut, const cCondMean& theCondMean) ; ///< Print the conditional mean model
 		void SetDefaultInitPoint(double theMean, double theVar) ;
 		void GetCondMeanType(eCondMeanEnum* theCodeType) const ; ///< Return the type of each mean component	
-		cCondMean& operator =(cCondMean& theSrc) ; ///< affectation operator
+		cCondMean& operator =(const cCondMean& theSrc) ; ///< affectation operator
+		void UpdateProxyMeanParameters(void);
 		double ComputeMean(uint theDate, const cRegArchValue& theData) const ; ///< Return conditional mean.
 		/** Number of parameters in CondMean */
 		uint GetNParam(void) const ;

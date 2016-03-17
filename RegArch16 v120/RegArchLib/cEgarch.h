@@ -34,18 +34,22 @@ namespace RegArchLib {
 	public :
 		cEgarch(int theNArch = 0, int theNGarch=0) ;
 		cEgarch(cAbstResiduals* theResiduals, int theNArch = 0, int theNGarch=0) ;
-		cEgarch(cAbstCondVar& theEgarch) ;
+		cEgarch(const cEgarch& theEgarch) ;
 		virtual ~cEgarch() ;
 		virtual cAbstCondVar* PtrCopy() const ; /// < Return a copy of *this				
 		void Delete(void) ;
-		void Print(ostream& theOut) const ;
+	#ifndef _RDLL_
+		void Print(ostream& theOut = cout) const; ///< print the parameters
+	#else
+		void Print(void);
+	#endif //_RDLL_
 		void SetDefaultInitPoint(double theMean, double theVar) ;
 		void ReAlloc(const uint theSize, const uint theNumParam=0) ; ///< Allocation of the model parameters
 		void ReAlloc(const cDVector& theVectParam, const uint theNumParam=0) ; ///< Allocation of the model parameters
 		void Set(const double theValue, const uint theIndex=0, const uint theNumParam=0) ; ///< Set model parameters.
 		void Set(const cDVector& theVectParam, const uint theNumParam=0) ; ///< Set model parameters.
 		double Get(const uint theIndex=0, const uint theNumParam=0) ;
-		cAbstCondVar& operator=(cAbstCondVar& theSrc) ;
+		cEgarch& operator=(const cEgarch& theSrc) ;
 		void UpdateProxyVarParameters(void) {}; 
 		double ComputeVar(uint theDate, const cRegArchValue& theValue) const ;
 		uint GetNParam(void) const ; ///< Number of parameters in that model part
