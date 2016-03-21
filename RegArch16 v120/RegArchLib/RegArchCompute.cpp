@@ -209,25 +209,28 @@ namespace RegArchLib {
 			cGSLVector theParamBumpPlus(theParam.GetNParam());
 			theParam.RegArchParamToVector(theParamBumpPlus);
 			double theHAbsolute = theParamBumpPlus[i] * theh;
+			if (theHAbsolute == 0) {
+				theHAbsolute = 0.001 * theh;
+			}
 			theParamBumpPlus[i] += theHAbsolute;
-			cRegArchModel theModelBumpPlus;
+			cRegArchModel theModelBumpPlus(theParam);
 			theModelBumpPlus.VectorToRegArchParam(theParamBumpPlus);
 			cRegArchValue theValueBumpPlus(*theValue);
-			cRegArchGradient theGradDataBumpPlus(*theGradData);
+			cRegArchGradient theGradDataBumpPlus(&theParam);
 			cGSLVector theGradLtBumpPlus(theGradData->GetNParam());
 			RegArchGradLt(theDate, theModelBumpPlus, theValueBumpPlus, theGradDataBumpPlus, theGradLtBumpPlus);
 			// bump moins
 			cGSLVector theParamBumpMoins(theParam.GetNParam());
 			theParam.RegArchParamToVector(theParamBumpMoins);
 			theParamBumpMoins[i] -= theHAbsolute;
-			cRegArchModel theModelBumpMoins;
+			cRegArchModel theModelBumpMoins(theParam);
 			theModelBumpMoins.VectorToRegArchParam(theParamBumpMoins);
 			cRegArchValue theValueBumpMoins(*theValue);
-			cRegArchGradient theGradDataBumpMoins(*theGradData);
+			cRegArchGradient theGradDataBumpMoins(&theParam);
 			cGSLVector theGradLtBumpMoins(theGradData->GetNParam());
 			RegArchGradLt(theDate, theModelBumpMoins, theValueBumpMoins, theGradDataBumpMoins, theGradLtBumpMoins);
 			// set column
-			cGSLVector theGradLtSum = (theGradLtBumpMoins + theGradLtBumpPlus) * (1 / (2 * theHAbsolute));
+			cGSLVector theGradLtSum = (theGradLtBumpPlus - theGradLtBumpMoins) * (1 / (2 * theHAbsolute));
 			theHesslt.SetColumn(i, theGradLtSum);
 		}
 
@@ -265,7 +268,7 @@ namespace RegArchLib {
 			+ (1.0 / (mySigmat * mySigmat)) * theGradData.mCurrentGradMu * Transpose(theGradData.mCurrentGradSigma)
 			- (theValue.mUt[theDate] / (mySigmat*mySigmat)) * theHessData.mCurrentHessSigma; // mCurrentHessEps
 		// formule finale
-		theHesslt = (-1.0 / (mySigmat*mySigmat)) * theGradData.mCurrentGradSigma * Transpose(theGradData.mCurrentGradSigma)
+		theHesslt = (1.0 / (mySigmat*mySigmat)) * theGradData.mCurrentGradSigma * Transpose(theGradData.mCurrentGradSigma)
 			- (1.0 / mySigmat) * theHessData.mCurrentHessSigma
 			+ theParam.mResids->Diff2LogDensity(theValue.mEpst[theDate]) * theGradData.mCurrentGradEps * Transpose(theGradData.mCurrentGradEps)
 			+ theGradData.mCurrentDiffLogDensity * theHessData.mCurrentHessEps
@@ -343,7 +346,20 @@ namespace RegArchLib {
 
 	void NumericRegArchHessLLHold(cRegArchModel& theModel, cRegArchValue& theValue, cDMatrix& theHessLLH, double theh)
 	{
-
+		cRegArchGradient myGradData = cRegArchGradient(&theModel);
+		cRegArchHessien myHessData = cRegArchHessien(&theModel);
+		cDMatrix myHesslt(myHessData.GetNParam(), myHessData.GetNParam());
+		theHessLLH = 0.0L;
+		theModel.mVar->UpdateProxyVarParameters();
+		if (theModel.mMean != NULL)
+			theModel.mMean->UpdateProxyMeanParameters();
+		for (register int t = 0; t < (int)theValue.mYt.GetSize(); t++)
+		{
+			NumericRegArchHessLt(t, theModel, &theValue, &myGradData, myHesslt, theh);
+			theHessLLH += myHesslt;
+			myGradData.Update();
+			myHessData.Update();
+		}
 	}		
 
 #ifndef _RDLL_

@@ -16,50 +16,68 @@ int _tmain(int argc, _TCHAR* argv[])
 	cout.precision(12) ; 
 
 	// mean cond
+	cConst myConstMean(1);
 	cAr	myAr(2) ;
 	myAr.Set(.8, 0) ;
 	myAr.Set(-.2, 1) ;
+	/*
 	cMa myMa(2) ;
 	myMa.Set(0.8, 0) ;
 	myMa.Set(0.6, 1) ;
 	cConst myConstMean(10.0);
+	*/
 	cCondMean myCondMean ;
-	myCondMean.AddOneMean(myAr) ;
-	myCondMean.AddOneMean(myMa) ;
 	myCondMean.AddOneMean(myConstMean);
+	myCondMean.AddOneMean(myAr) ;
+	//myCondMean.AddOneMean(myMa) ;
+	//myCondMean.AddOneMean(myConstMean);
 	myCondMean.Print();
-	std::cin.get();
 
 	// residuals
 	cNormResiduals myNormResid;
 	myNormResid.Print();
-	std::cin.get();
 	
 	// var cond
-	cConstCondVar myConstVar(1.0) ;
+	cConstCondVar myConstVar(2.0) ;
+	/*
 	cArch myArch(1);
 	myArch.Set(0.4, 0, 0);
 	myArch.Set(0.5, 0, 1);
+	*/
 
 	// ??
-	cStdDevInMean myStdDevInMean(.6);
-	cVarInMean myVarInMean(.6);
+	//cStdDevInMean myStdDevInMean(.6);
+	//cVarInMean myVarInMean(.6);
 	
 	// set model
 	cRegArchModel myModel;
 	myModel.SetMean(myCondMean);
 	myModel.SetResid(myNormResid);
 	myModel.SetVar(myConstVar);
-	myModel.AddOneMean(myConstMean);
+	//myModel.AddOneMean(myConstMean);
 
 
-
-	std::cin.get();
-
-	
-	uint myNSimul = 10000;
+	uint myNSimul = 500;
 	cRegArchValue myValue(myNSimul);
 	RegArchSimul(myNSimul, myModel, myValue);
+
+	cGSLMatrix myHessLLH(myModel.GetNParam(), myModel.GetNParam());
+	std::cout << "Ca va calculer du Hess numérique !" << std::endl;
+	std::cin.get();
+	cRegArchGradient myGradData(&myModel);
+	cGSLMatrix myHesslt(myModel.GetNParam(), myModel.GetNParam());
+	NumericRegArchHessLt(10, myModel, &myValue, &myGradData, myHesslt, 0.1);
+	//NumericRegArchHessLLHold(myModel, myValue, myHessLLH, 0.1);
+	std::cout << myHesslt << std::endl;
+	std::cout << "Ca va calculer du Hess formelle !" << std::endl;
+	std::cin.get();
+	cRegArchHessien myHessData(&myModel);
+	RegArchHessLt(10, myModel, myValue, myGradData, myHessData, myHesslt);
+	//RegArchHessLLH(myModel, myValue, myHessLLH);
+	std::cout << myHesslt << std::endl;
+	std::cout << "Ok !" << std::endl;
+	std::cin.get();
+
 	
 
 /*
