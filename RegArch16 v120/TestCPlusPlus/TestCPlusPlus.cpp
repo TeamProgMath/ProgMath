@@ -66,15 +66,15 @@ int _tmain(int argc, _TCHAR* argv[])
 	std::cin.get();
 	cRegArchGradient myGradData(&myModel);
 	cGSLMatrix myHesslt(myModel.GetNParam(), myModel.GetNParam());
-	NumericRegArchHessLt(10, myModel, &myValue, &myGradData, myHesslt, 0.1);
-	//NumericRegArchHessLLHold(myModel, myValue, myHessLLH, 0.1);
-	std::cout << myHesslt << std::endl;
+	//NumericRegArchHessLt(10, myModel, &myValue, &myGradData, myHesslt, 0.1);
+	NumericRegArchHessLLHold(myModel, myValue, myHessLLH, 0.1);
+	std::cout << myHessLLH << std::endl;
 	std::cout << "Ca va calculer du Hess formelle !" << std::endl;
 	std::cin.get();
 	cRegArchHessien myHessData(&myModel);
-	RegArchHessLt(10, myModel, myValue, myGradData, myHessData, myHesslt);
-	//RegArchHessLLH(myModel, myValue, myHessLLH);
-	std::cout << myHesslt << std::endl;
+	//RegArchHessLt(10, myModel, myValue, myGradData, myHessData, myHesslt);
+	RegArchHessLLH(myModel, myValue, myHessLLH);
+	std::cout << myHessLLH << std::endl;
 	std::cout << "Ok !" << std::endl;
 	std::cin.get();
 
