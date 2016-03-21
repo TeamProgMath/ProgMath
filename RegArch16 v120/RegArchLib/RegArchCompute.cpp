@@ -282,6 +282,34 @@ namespace RegArchLib {
 	void RegArchHessLLH(cRegArchModel& theParam, cRegArchValue& theValue, cDMatrix& theHessLLH)
 	{
 
+		cRegArchGradient myGradData = cRegArchGradient(&theParam);
+		cRegArchHessien myHessData = cRegArchHessien(&theParam);
+		cDMatrix myHesslt(myHessData.GetNParam(),myHessData.GetNParam());
+		theHessLLH = 0.0L;
+		theParam.mVar->UpdateProxyVarParameters();
+		if (theParam.mMean != NULL)
+			theParam.mMean->UpdateProxyMeanParameters();
+		for (register int t = 0; t < (int)theValue.mYt.GetSize(); t++)
+		{
+			RegArchHessLt(t, theParam, theValue, myGradData, myHessData, myHesslt);
+			theHessLLH += myHesslt;
+			myGradData.Update();
+			myHessData.Update();
+		}
+
+		/*cRegArchGradient myGradData = cRegArchGradient(&theParam);
+		cDVector myGradlt(myGradData.GetNParam());
+		theGradLLH = 0.0L;
+		theParam.mVar->UpdateProxyVarParameters();
+		if (theParam.mMean != NULL)
+			theParam.mMean->UpdateProxyMeanParameters();
+		for (register int t = 0; t < (int)theData.mYt.GetSize(); t++)
+		{
+			RegArchGradLt(t, theParam, theData, myGradData, myGradlt);
+			theGradLLH += myGradlt;
+			myGradData.Update();
+		}*/
+
 	}
 
 	void NumericComputeJ(cRegArchModel& theModel, cRegArchValue& theValue, cDMatrix& theHessLLH, double theh=1e-5)
