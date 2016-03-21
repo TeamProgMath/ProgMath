@@ -52,68 +52,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	myModel.SetVar(myConstVar);
 	myModel.AddOneMean(myConstMean);
 
-//	myModel.AddOneMean(myAr);
 
-//	myModel.PrintMean();
-
-//	myModel.SetMean(myCondMean);
-	
-//	myModel.AddOneMean(myMa);
-//	myModel.SetResid(myStudent) ;
-//	myModel.SetResid(myNormResid);
-//	myModel.SetVar(myGarch);
-//	myModel.SetVar(myConstVar);	
-	
-	/*myModel.SetVar(myFigarch) ;
-	cout << "Modele : " ;
-	myModel.Print() ;*/
-
-//	return 0 ;
-	
-/*
-cRegArchModel* myModele1 = new cRegArchModel(myModele) ;
-	cout << "Modele1 : " ;
-	myModele1->Print() ;
-cRegArchModel myModele2 = *myModele1 ;
-	cout << "Modele2 : " ;
-	myModele2.Print() ;
-	delete myModele1 ;
-	
-cArch myArch(1) ;
-	myArch.Set(0.1, 0, 0) ;
-	myArch.Set(0.9, 0, 1) ;
-
-cAparch myAparch(1, 1) ;
-	myAparch.Set(0.1, 0, 0) ; // cste ;
-	myAparch.Set(1.3, 0, 1) ; // Delta ;
-	myAparch.Set(0.1, 0, 2) ; // Arch ;
-	myAparch.Set(0.3, 0, 3) ; // Gamma ;
-	myAparch.Set(0.8, 0, 4) ; // Garch ;
-
-
-cTarch myTarch(1) ;
-	myTarch.Set(0.1, 0, 0) ;
-	myTarch.Set(0.8, 0, 1) ;
-	myTarch.Set(0.7, 0, 2) ;
-//	myTarch.Print(cout) ;
-
-
-/*
-cEgarch myEgarch(myModel.mResids, 1, 1) ;
-	myEgarch.Set(-0.1217, 0, 1) ; // cste
-	myEgarch.Set(0.06046, 0, 2) ; // ARCH
-	myEgarch.Set(0.985106, 0, 3) ; // GARCH
-	myEgarch.Set(3.198596, 0, 4) ; // TETA
-	myEgarch.Set(1.0, 0, 5) ; //GAMMA
-	myEgarch.Print() ;
-
-
-cConst myConst(100.0) ;
-*/
-//cVarInMean myVarInMean(0.4) ;
 
 	std::cin.get();
 
+	
 	uint myNSimul = 10000;
 	cRegArchValue myValue(myNSimul);
 	RegArchSimul(myNSimul, myModel, myValue);
@@ -173,20 +116,20 @@ cDVector myGradLt = cDVector(myNParam);
 cDMatrix myHessLt = cDMatrix(myNParam, myNParam);
 double mylt = 0;
 cDVector myGradNum = cDVector(myNParam);
+cDMatrix myHessNum = cDMatrix(myNParam, myNParam);
+
 cRegArchValue* myValueGrad = new cRegArchValue[myNParam+1];
 cRegArchGradient* myGradientHess = new cRegArchGradient[myNParam + 1];
 
 for (uint j = 0; j <= myNParam; j++)
-	{
-		myValueGrad[j].ReAlloc(myValue.mYt, myValue.mXt);
-		myGradientHess[j].ReAlloc(&myModel);
-	}
+{
+	myValueGrad[j].ReAlloc(myValue.mYt, myValue.mXt);
+	myGradientHess[j].ReAlloc(&myModel);
+}
 
-
-cDMatrix myHessNum = cDMatrix(myNParam, myNParam);
 cDMatrix myDiff = cDMatrix(myNParam, myNParam);
 cDVector myDiffGrad = cDVector(myNParam);
-	cout.precision(3);
+cout.precision(3);
 for (register uint t = 0; t < myNSimul; t++)
 	{
 			
@@ -212,6 +155,7 @@ for (register uint t = 0; t < myNSimul; t++)
 		cout << myHessien.mCurrentHessVar << endl;
 		cout << myHessLt << endl;
 		cout << myHessien.mCurrentHessDens << endl;
+		std::cin.get();
 		
 		myGradient.Update();
 		myHessien.Update();

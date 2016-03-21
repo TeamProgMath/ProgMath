@@ -203,7 +203,35 @@ namespace RegArchLib {
 
 	void NumericRegArchHessLt(int theDate, cRegArchModel& theParam, cRegArchValue* theValue, cRegArchGradient* theGradData, cDMatrix& theHesslt, double theh)
 	{
+		int nb_params = theParam.GetNParam();
+		for (int i = 0; i < nb_params; i++) {
+			// bump plus
+			cGSLVector theParamBumpPlus(theParam.GetNParam());
+			theParam.RegArchParamToVector(theParamBumpPlus);
+			double theHAbsolute = theParamBumpPlus[i] * theh;
+			theParamBumpPlus[i] += theHAbsolute;
+			cRegArchModel theModelBumpPlus;
+			theModelBumpPlus.VectorToRegArchParam(theParamBumpPlus);
+			cRegArchValue theValueBumpPlus(*theValue);
+			cRegArchGradient theGradDataBumpPlus(*theGradData);
+			cGSLVector theGradLtBumpPlus(theGradData->GetNParam());
+			RegArchGradLt(theDate, theModelBumpPlus, theValueBumpPlus, theGradDataBumpPlus, theGradLtBumpPlus);
+			// bump moins
+			cGSLVector theParamBumpMoins(theParam.GetNParam());
+			theParam.RegArchParamToVector(theParamBumpMoins);
+			theParamBumpMoins[i] -= theHAbsolute;
+			cRegArchModel theModelBumpMoins;
+			theModelBumpMoins.VectorToRegArchParam(theParamBumpMoins);
+			cRegArchValue theValueBumpMoins(*theValue);
+			cRegArchGradient theGradDataBumpMoins(*theGradData);
+			cGSLVector theGradLtBumpMoins(theGradData->GetNParam());
+			RegArchGradLt(theDate, theModelBumpMoins, theValueBumpMoins, theGradDataBumpMoins, theGradLtBumpMoins);
+			// set column
+			cGSLVector theGradLtSum = (theGradLtBumpMoins + theGradLtBumpPlus) * (1 / (2 * theHAbsolute));
+			theHesslt.SetColumn(i, theGradLtSum);
+		}
 
+		
 	}
 
 	void RegArchGradAndHessLt(int theDate, cRegArchModel& theParam, cRegArchValue& theValue, cRegArchGradient& theGradData, cRegArchHessien& theHessData, cDVector& theGradlt, cDMatrix& theHesslt)
