@@ -1,12 +1,12 @@
 #include "StdAfxRegArchLib.h"
 
 /*!
-	\file cArch.cpp
-	\brief sources for class cArch methods.
+  \file cArch.cpp
+  \brief sources for class cArch methods.
 
-	\author Jean-Baptiste DURAND, Ollivier TARAMASCO 
-	\date dec-18-2006 - Last change feb-18-2011
-*/
+  \author Jean-Baptiste DURAND, Ollivier TARAMASCO 
+  \date dec-18-2006 - Last change feb-18-2011
+ */
 
 namespace RegArchLib {
 	/*!
@@ -14,18 +14,18 @@ namespace RegArchLib {
 	 * \param uint theNArch: number of lags
 	 */
 	cArch::cArch(uint theNArch)
-	:cAbstCondVar(eArch)   // call constructor of cAbstCondVar with type eArch
+				   :cAbstCondVar(eArch)   // call constructor of cAbstCondVar with type eArch
 	{
 		mvArch.ReAlloc(theNArch) ;
 		MESS_CREAT("cArch")
 	}
 
 	/*!
-	* \fn cArch::cArch(const cAbstCondVar& theArch):cAbstCondVar(eArch)
-	* \param const cAbstCondVar& theArch: the recopy parameter
-	*/
+	 * \fn cArch::cArch(const cAbstCondVar& theArch):cAbstCondVar(eArch)
+	 * \param const cAbstCondVar& theArch: the recopy parameter
+	 */
 	cArch::cArch(const cArch& theArch)
-		:cAbstCondVar(eArch)   // call constructor of cAbstCondVar with type eArch
+					  :cAbstCondVar(eArch)   // call constructor of cAbstCondVar with type eArch
 	{
 		*this = theArch;
 		MESS_CREAT("cArch")
@@ -36,7 +36,7 @@ namespace RegArchLib {
 	 */
 	cArch::~cArch()
 	{	mvArch.Delete() ;
-  		MESS_DESTR("cArch") ;
+		MESS_DESTR("cArch") ;
 	}
 
 	/*!
@@ -53,8 +53,8 @@ namespace RegArchLib {
 	 */
 	cAbstCondVar* cArch::PtrCopy() const
 	{
-		 cArch *mycArch = new cArch(*this);
-		 return mycArch;
+		cArch *mycArch = new cArch(*this);
+		return mycArch;
 	}
 
 	/*!
@@ -63,7 +63,7 @@ namespace RegArchLib {
 	 */
 	void cArch::Print(ostream& theOut) const
 	{
-	uint myNArch = mvArch.GetSize() ;
+		uint myNArch = mvArch.GetSize() ;
 		theOut << "ARCH(" << myNArch << ") model with:" << endl ;
 		theOut << "\tCste=" << mvConst << endl ;
 		for (register uint i = 0 ; i < mvArch.GetSize() ; i++)
@@ -73,7 +73,7 @@ namespace RegArchLib {
 #ifdef _RDLL_
 	void cArch::Print(void)
 	{
-	uint myNArch = mvArch.GetSize();
+		uint myNArch = mvArch.GetSize();
 		Rprintf("ARCH(%d) model with:\n", myNArch);
 		Rprintf("\tCste=%f\n",mvConst);
 		for (register uint i = 0; i < mvArch.GetSize(); i++)
@@ -91,8 +91,8 @@ namespace RegArchLib {
 	void cArch::SetDefaultInitPoint(double theMean, double theVar)
 	{
 		mvConst = theVar*0.1 ;
-	uint myNArch = mvArch.GetSize() ;
-	uint i ;
+		uint myNArch = mvArch.GetSize() ;
+		uint i ;
 		for (i = 0 ; i < myNArch ; i++)
 			mvArch[i] = 0.9/(double)myNArch ;
 	}
@@ -117,16 +117,16 @@ namespace RegArchLib {
 	void cArch::ReAlloc(const cDVector& theVectParam, const uint theNumParam)
 	{	switch (theNumParam)
 		{	case 0: // mvConst
-				if (theVectParam.GetSize() > 0)
-					mvConst = theVectParam[0] ;
-				else
-					throw cError("cArch::ReAlloc - Size of theVectParam must be > 0") ;
+			if (theVectParam.GetSize() > 0)
+				mvConst = theVectParam[0] ;
+			else
+				throw cError("cArch::ReAlloc - Size of theVectParam must be > 0") ;
 			break ;
 			case 1 : // mvArch
-				mvArch = theVectParam ;
+			mvArch = theVectParam ;
 			break ;
 			default :
-	//			throw cError("cArch::ReAlloc - theNumParam must be in 0, 1") ;
+			//			throw cError("cArch::ReAlloc - theNumParam must be in 0, 1") ;
 			break ;
 		}
 	}
@@ -139,120 +139,141 @@ namespace RegArchLib {
 	 * \param const uint theNumParam: =0, mvConst, =1, ARCH parameters
 	 * \details mvArch[theIndex] = theValue or mvConst = theValue
 	 */
-	void cArch::Set(const double theValue, const uint theIndex, const uint theNumParam)
-	{	switch (theNumParam)
-		{	case 0 :
+		void cArch::Set(const double theValue, const uint theIndex, const uint theNumParam)
+		{	switch (theNumParam)
+			{	case 0 :
 				mvConst = theValue ;
-			break ;
-			case 1 :
+				break ;
+				case 1 :
 				if (theIndex < mvArch.GetSize())
 					mvArch[theIndex] = theValue ;
 				else
 					throw cError("cArch::Set - wrong index") ;
-			break ;
-			default:
+				break ;
+				default:
 				throw cError("cArch::Set - theNumParam must be in 0, 1") ;
-			break ;
+				break ;
+			}
 		}
-	}
 
-	double  cArch::Get(const uint theIndex, const uint theNumParam)
-	{
-		double res = 0.0;
-		switch (theNumParam)
-		{	case 0 :
+		double  cArch::Get(const uint theIndex, const uint theNumParam)
+		{
+			double res = 0.0;
+			switch (theNumParam)
+			{	case 0 :
 				res = mvConst ;
-			break ;
-			case 1 :
+				break ;
+				case 1 :
 				res = mvArch[theIndex] ;
-			break ;
+				break ;
+			}
+			return res;
 		}
-		return res;
-	}
 
-	/*!
-	 * \fn void cArch::Set(const cDVector& theVectParam, const uint theNumParam)
-	 * \brief fill the parameters vector
-	 * \param const cDVector& theVectParam: the vector of values
-	 * \param const uint theNumParam: =0, mvConst; =1, mvArch
-	 * \details mvArch = theVectParam or mvConst = theVectParam[0]
-	 */
-	void cArch::Set(const cDVector& theVectParam, const uint theNumParam)
-	{	switch (theNumParam)
-		{	case 0 :
+		/*!
+		 * \fn void cArch::Set(const cDVector& theVectParam, const uint theNumParam)
+		 * \brief fill the parameters vector
+		 * \param const cDVector& theVectParam: the vector of values
+		 * \param const uint theNumParam: =0, mvConst; =1, mvArch
+		 * \details mvArch = theVectParam or mvConst = theVectParam[0]
+		 */
+		void cArch::Set(const cDVector& theVectParam, const uint theNumParam)
+		{	switch (theNumParam)
+			{	case 0 :
 				if (theVectParam.GetSize() > 0)
 					mvConst = theVectParam[0] ;
 				else
 					throw cError("cArch::Set - Size of theVectParam must be > 0") ;
-			break ;
-			case 1 :
+				break ;
+				case 1 :
 				mvArch = theVectParam ;
-			break ;
-			default:
+				break ;
+				default:
 				throw cError("cArch::Set - theNumParam must be in 0, 1") ;
-			break ;
+				break ;
+			}
 		}
-	}
 
-	/*!
-	 * \fn double cArch::ComputeVar(uint theDate, const cRegArchValue& theData) const
-	 * \param int theDate: date of computation
-	 * \param const cRegArchValue& theData: past datas
-	 * \details theData is not updated here.
-	*/
-	double cArch::ComputeVar(uint theDate, const cRegArchValue& theDatas) const
-	{
-	uint myp = mvArch.GetSize() ;
-	double myRes = mvConst ;
-		for (register uint i = 1 ; i <= MIN(myp, theDate) ; i++)
-			myRes += mvArch[i-1] * theDatas.mUt[theDate-i] * theDatas.mUt[theDate-i] ;
-		return myRes ;
-	}
+		/*!
+		 * \fn double cArch::ComputeVar(uint theDate, const cRegArchValue& theData) const
+		 * \param int theDate: date of computation
+		 * \param const cRegArchValue& theData: past datas
+		 * \details theData is not updated here.
+		 */
+		double cArch::ComputeVar(uint theDate, const cRegArchValue& theDatas) const
+		{
+			uint myp = mvArch.GetSize() ;
+			double myRes = mvConst ;
+			for (register uint i = 1 ; i <= MIN(myp, theDate) ; i++)
+				myRes += mvArch[i-1] * theDatas.mUt[theDate-i] * theDatas.mUt[theDate-i] ;
+			return myRes ;
+		}
 
-	uint cArch::GetNParam(void) const
-	{
-		return 1 + mvArch.GetSize() ;
-	}
+		uint cArch::GetNParam(void) const
+		{
+			return 1 + mvArch.GetSize() ;
+		}
 
-	uint cArch::GetNLags(void) const
-	{
-		return mvArch.GetSize() ;
-	}
+		uint cArch::GetNLags(void) const
+		{
+			return mvArch.GetSize() ;
+		}
 
-	void cArch::ComputeGrad(uint theDate, const cRegArchValue& theValue, cRegArchGradient& theGradData, cAbstResiduals* theResiduals)
-	{
-	uint myp = mvArch.GetSize() ;
-		theGradData.mCurrentGradVar = 0.0L ;
-	uint myBegIndex = theGradData.GetNMeanParam() ;
-		theGradData.mCurrentGradVar[myBegIndex] = 1.0 ;
-	register uint i ;
-		for (i = 1 ; i <= MIN(myp, theDate) ; i++)
-			theGradData.mCurrentGradVar[myBegIndex+i] = theValue.mUt[theDate - i]*theValue.mUt[theDate - i] ;
-		for (i = 1 ; i <= MIN(myp, theDate) ; i++)
-			theGradData.mCurrentGradVar -= 2.0 * mvArch[i-1] * theValue.mUt[theDate - i] * theGradData.mGradMt[i-1] ;
-	}
+		void cArch::ComputeGrad(uint theDate, const cRegArchValue& theValue, cRegArchGradient& theGradData, cAbstResiduals* theResiduals)
+		{
+			uint myp = mvArch.GetSize() ;
+			theGradData.mCurrentGradVar = 0.0L ;
+			uint myBegIndex = theGradData.GetNMeanParam() ;
+			theGradData.mCurrentGradVar[myBegIndex] = 1.0 ;
+			register uint i ;
+			for (i = 1 ; i <= MIN(myp, theDate) ; i++)
+				theGradData.mCurrentGradVar[myBegIndex+i] = theValue.mUt[theDate - i]*theValue.mUt[theDate - i] ;
+			for (i = 1 ; i <= MIN(myp, theDate) ; i++)
+				theGradData.mCurrentGradVar -= 2.0 * mvArch[i-1] * theValue.mUt[theDate - i] * theGradData.mGradMt[i-1] ;
+		}
 
-	void cArch::RegArchParamToVector(cDVector& theDestVect, uint theIndex)
-	{
-	uint mySize = GetNParam() ;
-		if (theDestVect.GetSize() < mySize + theIndex)
-			throw cError("Wrong size") ;
-		theDestVect[theIndex] = mvConst ;
-		mvArch.SetSubVectorWithThis(theDestVect, theIndex+1) ;
-	}
+		void cArch::RegArchParamToVector(cDVector& theDestVect, uint theIndex)
+		{
+			uint mySize = GetNParam() ;
+			if (theDestVect.GetSize() < mySize + theIndex)
+				throw cError("Wrong size") ;
+			theDestVect[theIndex] = mvConst ;
+			mvArch.SetSubVectorWithThis(theDestVect, theIndex+1) ;
+		}
 
-	void cArch::VectorToRegArchParam(const cDVector& theSrcVect, uint theIndex)
-	{
-	uint mySize = theSrcVect.GetSize() ;
-		if (GetNParam() + theIndex > mySize)
-			throw cError("Wrong size") ;
-		mvConst = theSrcVect[theIndex] ;
-		mvArch.SetThisWithSubVector(theSrcVect, theIndex+1) ;
-	}
+		void cArch::VectorToRegArchParam(const cDVector& theSrcVect, uint theIndex)
+		{
+			uint mySize = theSrcVect.GetSize() ;
+			if (GetNParam() + theIndex > mySize)
+				throw cError("Wrong size") ;
+			mvConst = theSrcVect[theIndex] ;
+			mvArch.SetThisWithSubVector(theSrcVect, theIndex+1) ;
+		}
 
-	void cArch::ComputeHess(uint theDate, const cRegArchValue& theData, cRegArchGradient& theGradData, cRegArchHessien& theHessData, cAbstResiduals* theResiduals)
-	{
+		void cArch::ComputeHess(uint theDate, const cRegArchValue& theData, cRegArchGradient& theGradData, cRegArchHessien& theHessData, cAbstResiduals* theResiduals)
+		{
+			theHessData.mCurrentHessVar = 0.0L;
+			uint myp = mvArch.GetSize();
+			uint myBegIndex = theGradData.GetNMeanParam();
+			register uint i,j,k;
 
-	}
+			for (i = 0; i < MIN(myp, theDate); i++) 
+				theHessData.mCurrentHessVar -= 2.*mvArch[i] * theData.mUt[theDate -i-1]* theHessData.mHessMt[i];
+
+			for (k = 0; k < MIN(myp, theDate); k++)
+				for (i = 0; i < theHessData.mCurrentHessVar.GetNRow(); i++)
+					for (j = 0; j < theHessData.mCurrentHessVar.GetNCol(); j++)
+						theHessData.mCurrentHessVar[i][j] += 2 * mvArch[k] * theGradData.mGradMt[k][i] * theGradData.mGradMt[k][j];
+
+
+
+			for (i = 0; i < MIN(myp, theDate); i++)
+				for (j = 0; j < theHessData.mCurrentHessVar.GetNCol(); j++)
+					theHessData.mCurrentHessVar[1+i][j] -= 2 * theData.mUt[theDate -i-1] * theGradData.mGradMt[i][j];
+
+			for (i = 0; i <  theHessData.mCurrentHessVar.GetNCol(); i++)
+				for (j = 1; j <= MIN(myp, theDate); j++)
+					theHessData.mCurrentHessVar[i][1+j] -= 2 * theData.mUt[theDate - j] * theGradData.mGradMt[j][i];
+		}
 
 }//namespace

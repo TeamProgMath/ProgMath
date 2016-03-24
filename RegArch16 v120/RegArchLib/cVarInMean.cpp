@@ -130,5 +130,12 @@ namespace RegArchLib {
 
 	void cVarInMean::ComputeHess(uint theDate, const cRegArchValue& theData, cRegArchGradient& theGradData,cRegArchHessien& theHessData, uint theBegIndex, cAbstResiduals* theResiduals) 
 	{
+	for (int i = 0; i < theHessData.mCurrentHessMu.GetNRow(); i++) {
+	theHessData.mCurrentHessMu[theBegIndex][i] += theGradData.mCurrentGradVar[i];
+	theHessData.mCurrentHessMu[i][theBegIndex] += theGradData.mCurrentGradVar[i];
+	}
+	theHessData.mCurrentHessMu += mvVarInMean * theHessData.mCurrentHessVar;
+
+
 	}
 }//namespace
