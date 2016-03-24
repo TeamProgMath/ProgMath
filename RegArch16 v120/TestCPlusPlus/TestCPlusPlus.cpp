@@ -60,11 +60,18 @@ int _tmain(int argc, _TCHAR* argv[])
 	uint myNSimul = 500;
 	cRegArchValue myValue(myNSimul);
 	RegArchSimul(myNSimul, myModel, myValue);
+
+	double m = myConstMean.Get(0);
+	double sigma = sqrt(myConstVar.Get(0));
 	cGSLMatrix trueHess(2, 2);
 	trueHess[0][0] = -myNSimul / (2);
 	for (int i = 0; i < myNSimul; i++){
-		//trueHess[0][1] -= myValue
+		trueHess[0][1] -= myValue.mYt[i];
+		trueHess[1][1] -= (myValue.mYt[i] - m)*(myValue.mYt[i] - m);
 	}
+	trueHess[0][1] /= pow(sigma, 4);
+	trueHess[1][1] /= pow(sigma, 6);
+	trueHess[1][1] += 1/(2*pow(sigma, 4));
 
 	cGSLMatrix myHessLLH(myModel.GetNParam(), myModel.GetNParam());
 	std::cout << "Ca va calculer du Hess numérique !" << std::endl;
@@ -80,6 +87,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	//RegArchHessLt(10, myModel, myValue, myGradData, myHessData, myHesslt);
 	RegArchHessLLH(myModel, myValue, myHessLLH);
 	std::cout << myHessLLH << std::endl;
+	std::cout << "La matrice théorique est :" << std::endl;
+	std::cin.get();
+	std::cout << trueHess << std::endl;
 	std::cout << "Ok !" << std::endl;
 	std::cin.get();
 
