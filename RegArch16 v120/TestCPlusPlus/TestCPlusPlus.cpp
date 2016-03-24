@@ -63,7 +63,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	cGSLMatrix trueHess(2, 2);
 	trueHess[0][0] = -myNSimul / (2);
 	for (int i = 0; i < myNSimul; i++){
-		trueHess[0][1] -= my
+		//trueHess[0][1] -= myValue
 	}
 
 	cGSLMatrix myHessLLH(myModel.GetNParam(), myModel.GetNParam());
