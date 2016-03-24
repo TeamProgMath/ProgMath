@@ -16,7 +16,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	cout.precision(12) ; 
 
 	// mean cond
-	cConst myConstMean(1);
+	cConst myConstMean(1); 
 	cAr	myAr(2) ;
 	myAr.Set(.8, 0) ;
 	myAr.Set(-.2, 1) ;
@@ -28,7 +28,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	*/
 	cCondMean myCondMean ;
 	myCondMean.AddOneMean(myConstMean);
-	myCondMean.AddOneMean(myAr) ;
+	//myCondMean.AddOneMean(myAr) ;
 	//myCondMean.AddOneMean(myMa) ;
 	//myCondMean.AddOneMean(myConstMean);
 	myCondMean.Print();
@@ -60,6 +60,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	uint myNSimul = 500;
 	cRegArchValue myValue(myNSimul);
 	RegArchSimul(myNSimul, myModel, myValue);
+	cGSLMatrix trueHess(2, 2);
+	trueHess[0][0] = -myNSimul / (2);
+	for (int i = 0; i < myNSimul; i++){
+		trueHess[0][1] -= my
+	}
 
 	cGSLMatrix myHessLLH(myModel.GetNParam(), myModel.GetNParam());
 	std::cout << "Ca va calculer du Hess numérique !" << std::endl;
